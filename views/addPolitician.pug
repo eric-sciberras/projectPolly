@@ -1,0 +1,52 @@
+extends layout
+
+block content
+  .pb-2.mt-2.mb-4.border-bottom
+    h3 Sign in
+  form(method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='name') Name
+      .col-md-7
+        input.form-control(type='text', name='name', id='name', placeholder='Name', autofocus, required)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='levelOfGovernment') Level Of Government
+      .col-md-7
+        select.form-control(type='text', name='levelOfGovernment', id='levelOfGovernment', required)
+          option Default select
+          option Federal
+          option State
+          option Local
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='politicalParty') Policical Party
+      .col-md-7
+        select.form-control(type='text', name='politicalParty', id='politicalParty', placeholder='Political Party', required)
+            option Default select
+            option Australian Greens
+            option Australian Labor Party
+            option Centre Alliance
+            option Country Liberal Party 
+            option Derryn Hinch's Justice Party
+            option Independent
+            option Katter's Australian Party
+            option Liberal Democratic Party
+            option Liberal National Party 
+            option Liberal Party of Australia
+            option National Party of Australia
+            option Pauline Hanson's One Nation
+            option United Australia Party
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='politicalParty') Current Status
+      .col-md-7
+        input.form-control(type='text', name='politicalParty', id='politicalParty', placeholder='Political Party', required) 
+        small.form-text.text-muted
+          | Current political title e.g. Minister/shadow minister for..., Lord Mayor, Candidate.
+
+    .form-group
+      .offset-sm-3.col-md-7.pl-2
+        button.col-md-3.btn.btn-primary(type='submit')
+          i.far.fa-user.fa-sm
+          | Submit
+    .form-group
+      .offset-sm-3.col-md-7.pl-2
+        hr
