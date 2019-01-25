@@ -19,7 +19,11 @@ const userSchema = new mongoose.Schema({
     location: String,
     website: String,
     picture: String
-  }
+  },
+
+  promise: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Politician' }],
+  view: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Politician' }]
+
 }, { timestamps: true });
 
 /**
