@@ -2,7 +2,7 @@ extends layout
 
 block content
   .pb-2.mt-2.mb-4.border-bottom
-    h3 Sign in
+    h3 Add New Politician
   form(method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row
@@ -36,11 +36,174 @@ block content
             option Pauline Hanson's One Nation
             option United Australia Party
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='politicalParty') Current Status
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='electorate') Electorate
       .col-md-7
-        input.form-control(type='text', name='politicalParty', id='politicalParty', placeholder='Political Party', required) 
+        select.form-control(type='text', name='electorate', id='electorate', placeholder='Electorate', required)
+            option Default select
+            option Bean
+            option Canberra
+            option Fenner
+            option Banks
+            option Barton
+            option Bennelong
+            option Berowra
+            option Blaxland
+            option Bradfield
+            option Calare
+            option Chifley
+            option Cook
+            option Cowper
+            option Cunningham
+            option Dobell
+            option Eden-Monaro
+            option Farrer
+            option Fowler
+            option Gilmore
+            option Grayndler
+            option Greenway
+            option Hughes
+            option Hume
+            option Hunter
+            option Kingsford Smith
+            option Lindsay
+            option Lyne
+            option Macarthur
+            option Mackellar
+            option Macquarie
+            option McMahon
+            option Mitchell
+            option Newcastle
+            option New England
+            option North Sydney
+            option Page
+            option Parkes
+            option Parramatta
+            option Paterson
+            option Reid
+            option Richmond
+            option Riverina
+            option Robertson
+            option Shortland
+            option Sydney
+            option Warringah
+            option Watson
+            option Wentworth
+            option Werriwa
+            option Whitlam
+            option Lingiari
+            option Solomon
+            option Blair
+            option Bonner
+            option Bowman
+            option Brisbane
+            option Capricornia
+            option Dawson
+            option Dickson
+            option Fadden
+            option Fairfax
+            option Fisher
+            option Flynn
+            option Forde
+            option Griffith
+            option Groom
+            option Herbert
+            option Hinkler
+            option Kennedy
+            option Leichhardt
+            option Lilley
+            option Longman
+            option Maranoa
+            option McPherson
+            option Moncrieff
+            option Moreton
+            option Oxley
+            option Petrie
+            option Rankin
+            option Ryan
+            option Wide Bay
+            option Wright
+            option Adelaide
+            option Barker
+            option Boothby
+            option Grey
+            option Hindmarsh
+            option Kingston
+            option Makin
+            option Mayo
+            option Spence
+            option Sturt
+            option Bass
+            option Braddon
+            option Clark
+            option Franklin
+            option Lyons
+            option Aston
+            option Ballarat
+            option Bendigo
+            option Bruce
+            option Calwell
+            option Casey
+            option Chisholm
+            option Cooper
+            option Corangamite
+            option Corio
+            option Deakin
+            option Dunkley
+            option Flinders
+            option Fraser
+            option Gellibrand
+            option Gippsland
+            option Goldstein
+            option Gorton
+            option Higgins
+            option Holt
+            option Hotham
+            option Indi
+            option Isaacs
+            option Jagajaga
+            option Kooyong
+            option Lalor
+            option La Trobe
+            option Macnamara
+            option Mallee
+            option Maribyrnong
+            option McEwen
+            option Melbourne
+            option Menzies
+            option Monash
+            option Nicholls
+            option Scullin
+            option Wannon
+            option Wills
+            option Brand
+            option Burt
+            option Canning
+            option Cowan
+            option Curtin
+            option Durack
+            option Forrest
+            option Fremantle
+            option Hasluck
+            option Moore
+            option O'Connor
+            option Pearce
+            option Perth
+            option Stirling
+            option Swan
+            option Tangney
+
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='title') Current title
+      .col-md-7
+        input.form-control(type='text', name='title', id='title', placeholder='title', required) 
         small.form-text.text-muted
           | Current political title e.g. Minister/shadow minister for..., Lord Mayor, Candidate.
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='twitterHandle') Twitter Handle (optional)
+      .col-md-7
+        input.form-control(type='text', name='twitterHandle', id='twitterHandle', placeholder='Twitter Handle') 
+        small.form-text.text-muted
+          | The twitter handle is used to grab the politicians profile picture
 
     .form-group
       .offset-sm-3.col-md-7.pl-2

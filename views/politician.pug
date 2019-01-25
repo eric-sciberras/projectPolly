@@ -1,0 +1,166 @@
+extends layout
+  
+block content
+    script(src='/js/charts.js')
+    .container.text-center.py-3
+      .row.justify-content-center
+        .col-lg-10
+          .row
+            .col-lg-4.align-self-center
+              img.img-fluid(src='https://twitter.com/'+ politician.twitterName + '/profile_image?size=original', alt='Responsive image' , width="200", height="200")
+            .col-lg-8
+              h1 #{politician.name}
+              h5 Title: #{politician.title}
+              h5 Party: #{politician.politicalParty}
+              h5 Electorate: #{politician.electorate}
+              button.btn.btn-primary(type='button') Edit Profile
+              ul#myTab.nav.nav-tabs(role='tablist')
+                li.nav-item
+                  a#home-tab.nav-link.active(data-toggle='tab', href='#home', role='tab', aria-controls='home', aria-selected='true') Overview
+                li.nav-item
+                  a#profile-tab.nav-link(data-toggle='tab', href='#profile', role='tab', aria-controls='profile', aria-selected='false') Promises
+                li.nav-item
+                  a#contact-tab.nav-link(data-toggle='tab', href='#contact', role='tab', aria-controls='contact', aria-selected='false') Views
+          #myTabContent.tab-content.profile-tab.py-5
+            #home.tab-pane.fade.show.active(role='tabpanel', aria-labelledby='home-tab')
+              .row
+                .col-lg-6
+                  canvas#myChart
+                  //- script.
+                    //- var data = #{JSON.stringify(politician)};
+                    console.log("12 3 45");
+                    //- var politician = #{JSON.stringify(politician)};
+                    //- window.onload = radarChartConstructor(#{politician});
+                .col-lg-6
+                  form(action="/characteristics/" + polly_id, method="POST")
+                    input(type='hidden', name='_csrf', value=_csrf)
+                    .form-group
+                      label(for='trustworthy') Trustworthy
+                      input.custom-range(type='range', name='trustworthy', id='trustworthy', value='-1' ,min='-1', max='10', step='1')
+                      label(for='accountable') Accountable
+                      input.custom-range(type='range', name='accountable', id='accountable', value='-1',min='-1', max='10', step='1')
+                      label(for='empathetic') Empathetic
+                      input.custom-range(type='range', name='empathetic', id='empathetic', value='-1',min='-1', max='10', step='1')
+                      label(for='knowledgeable') Knowledgeable
+                      input.custom-range(type='range', name='knowledgeable', id='knowledgeable',value='-1' ,min='-1', max='10', step='1')
+                      label(for='respectful') Respectful
+                      input.custom-range(type='range', name='respectful', id='respectful',value='-1' ,min='-1', max='10', step='1')
+                      if !user
+                        button.btn.btn-primary(type='submit',disabled='') Login to vote
+                      else
+                        button.btn.btn-primary(type='submit') Submit
+              //- img.img-fluid(src='canvas.png')
+            #profile.tab-pane.fade(role='tabpanel', aria-labelledby='profile-tab')
+              // Promises
+              #accordion.accordion
+                .card
+                  .card-header
+                    h5.mb-0
+                      button.btn.btn-link(data-toggle='collapse', data-target='#collapse1', aria-expanded='true', aria-controls='collapse1')
+                        | Promise #1
+                      button.btn.btn-primary.float-right(type='button') Edit
+                  #collapse1.collapse.show(aria-labelledby='heading2', data-parent='#accordion')
+                    .card-body
+                      .row
+                        .col-lg-8
+                          p
+                            | Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam semper
+                            | tincidunt
+                            | justo,
+                            | ac tempor mi consectetur vitae. Curabitur tempus enim non felis elementum, a imperdiet massa
+                            | euismod.
+                            | In hac habitasse platea dictumst. Fusce ultrices mi tristique leo vehicula, eget vestibulum
+                            | arcu
+                            | vestibulum.
+                          p Source: www.wikipedia.com
+                        .col-lg-4.text-center
+                          //- img.img-fluid(src='canvas.png')
+                        .col-lg-12.text-center
+                          p Have your say, was this promise:
+                          .btn-group.btn-group-justified.text-centered
+                            .btn-group
+                              button.btn.btn-success(type='button') Achieved
+                            .btn-group
+                              button.btn.btn-warning(type='button') Partially Achieved
+                            .btn-group
+                              button.btn.btn-danger(type='button') Broken
+                .card
+                  .card-header
+                    h5.mb-0
+                      button.btn.btn-link(data-toggle='collapse', data-target='#collapse2', aria-expanded='true', aria-controls='collapse2')
+                        | Promise #2
+                      button.btn.btn-primary.float-right(type='button') Edit
+                  #collapse2.collapse(aria-labelledby='heading2', data-parent='#accordion')
+                    .card-body
+                      .row
+                        .col-lg-8
+                          p
+                            | Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam semper
+                            | tincidunt
+                            | justo,
+                            | ac tempor mi consectetur vitae. Curabitur tempus enim non felis elementum, a imperdiet massa
+                            | euismod.
+                            | In hac habitasse platea dictumst. Fusce ultrices mi tristique leo vehicula, eget vestibulum
+                            | arcu
+                            | vestibulum.
+                          p Source: www.wikipedia.com
+                        .col-lg-4.text-center
+                          //- img.img-fluid(src='canvas.png')
+                        .col-lg-12.text-center
+                          p Have your say, was this promise:
+                          .btn-group.btn-group-justified.text-centered
+                            .btn-group
+                              button.btn.btn-success(type='button') Achieved
+                            .btn-group
+                              button.btn.btn-warning(type='button') Partially Achieved
+                            .btn-group
+                              button.btn.btn-danger(type='button') Broken
+            #contact.tab-pane.fade(role='tabpanel', aria-labelledby='contact-tab')
+              #accordion2.accordion
+                .card
+                  .card-header
+                    h5.mb-0
+                      button.btn.btn-link(data-toggle='collapse', data-target='#view1', aria-expanded='true', aria-controls='view1')
+                        | View #1
+                      button.btn.btn-primary.float-right(type='button') Edit
+                  #view1.collapse.show(aria-labelledby='view1', data-parent='#accordion2')
+                    .card-body
+                      .row
+                        .col-lg-12
+                          p
+                            | Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam semper
+                            | tincidunt
+                            | justo,
+                            | ac tempor mi consectetur vitae. Curabitur tempus enim non felis elementum, a imperdiet massa
+                            | euismod.
+                            | In hac habitasse platea dictumst. Fusce ultrices mi tristique leo vehicula, eget vestibulum
+                            | arcu
+                            | vestibulum.
+                          p Source: www.wikipedia.com
+                .card
+                  .card-header
+                    h5.mb-0
+                      button.btn.btn-link(data-toggle='collapse', data-target='#view2', aria-expanded='true', aria-controls='view2')
+                        | View #2
+                      button.btn.btn-primary.float-right(type='button') Edit
+                  #view2.collapse(aria-labelledby='view2', data-parent='#accordion2')
+                    .card-body
+                      .row
+                        .col-lg-12
+                          p
+                            | Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam semper
+                            | tincidunt
+                            | justo,
+                            | ac tempor mi consectetur vitae. Curabitur tempus enim non felis elementum, a imperdiet massa
+                            | euismod.
+                            | In hac habitasse platea dictumst. Fusce ultrices mi tristique leo vehicula, eget vestibulum
+                            | arcu
+                            | vestibulum.
+                          p Source: www.wikipedia.com
+    script.
+      radarChartConstructor(!{JSON.stringify(politician)});
+
+
+
+
+
