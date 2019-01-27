@@ -1,6 +1,8 @@
 /* eslint-env jquery, browser */
 $(document).ready(() => {});
 
+$(".alert").fadeOut(3000);
+
 $.typeahead({
   input: ".js-typeahead-politicians",
   order: "desc",
