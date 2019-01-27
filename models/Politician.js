@@ -86,40 +86,6 @@ function calculateAverage(characteristicSet, characteristic) {
   return averageScore;
 }
 
-// //Characteristics Average
-// PoliticianSchema.virtual("averageCharacteristics").get(function() {
-//   let totalVotes = [0, 0, 0, 0, 0];
-//   //let totalscores = [0, 0, 0, 0, 0];
-
-//   let averageCharacteristics = {
-//     trustworthy: 0,
-//     accountable: 0,
-//     empathetic: 0,
-//     knowledgeable: 0,
-//     respectful: 0
-//   };
-//   // this.characteristics = array of characteristics (all users ratings for all characteristics)
-//   // characteristicSet = a users rating for all characteristics
-//   // characteristic[i] = a users rating for a single characteristic
-//   for (characteristicSet in this.characteristics) {
-//     for (let i = 0; i < characteristicSet.length; i++) {
-//       if (characteristicSet != -1) {
-//         averageCharacteristics[i] += characteristicSet[i];
-//         totalVotes[i] += 1;
-//       }
-//     }
-//   }
-//   for (let i = 0; i < averageCharacteristics.length; i++) {
-//     // div by 0 here
-//     if (totalVotes[i] == 0) {
-//       averageCharacteristics[i] = 0;
-//     } else {
-//       averageCharacteristics[i] = averageCharacteristics[i] / totalVotes[i];
-//     }
-//   }
-//   return averageCharacteristics;
-// });
-
 PoliticianSchema.set("toObject", { virtuals: true });
 PoliticianSchema.set("toJSON", { virtuals: true });
 
