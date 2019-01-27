@@ -1,8 +1,7 @@
 const { promisify } = require("util");
 const Politician = require("../models/Politician");
 const toTitleCase = require("../utils/toTitleCase");
-// const JSSoup = require("jssoup").default;
-// const JSON = require('json');
+const findUsersRating = require("../utils/findUsersRating");
 
 /** Post a politician to the Database */
 exports.postPolitician = (req, res, next) => {
@@ -47,35 +46,33 @@ exports.getListOfPolitician = (req, res, next) => {
   });
 };
 
-// /** Return A list of Politicians For search query */
-// exports.getListOfPolitician = (req, res, next) => {
-//   Politician.find({},function postResponse(err, politicians){
-//     if (err)
-//       res.send(err);
-//     let names = []
-//     for (let i = 0; i < politicians.length; i++){
-//       names.push(politicians[i].name);
-//     }
-//     res.json(names);
-//   });
-// };
-
 /** Get a Politicians profile page */
 exports.getPoliticianPage = (req, res) => {
-  //console.log(req.user._id);
   Politician.findById(req.params.id, function postResponse(err, politician) {
     if (err) {
       res.send(err);
     }
 
-    //const { characteristics, ...nocharacteristics } = politician;
-    //politician = nocharacteristics;
+    let index = findUsersRating(politician, req.user._id);
+    let usersRating = {
+      trustworthy: -1,
+      accountable: -1,
+      empathetic: -1,
+      knowledgeable: -1,
+      respectful: -1,
+      userId: req.user._id
+    };
+    if (index != -1) {
+      usersRating = politician.characteristics[index];
+    }
+
     delete politician["characteristics"];
     console.log(politician);
     res.render("politician", {
       title: "Politician",
       polly_id: req.params.id,
-      politician
+      politician,
+      usersRating
     });
   });
 };
