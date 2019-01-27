@@ -17,10 +17,8 @@ function radarChartConstructor(politician) {
       ],
       datasets: [
         {
-          label: "Characteristics",
-          backgroundColor: "rgb(255, 99, 132)",
-          borderColor: "rgb(255, 99, 132)",
-          // data: [0, 10, 5, 2, 20]
+          backgroundColor: "rgba(66,139,202,.5)",
+          borderColor: "rgba(66,139,202,.5)",
           data: [
             politician.averageTrustworthy,
             politician.averageAccountable,
@@ -34,8 +32,20 @@ function radarChartConstructor(politician) {
 
     // Configuration options go here
     options: {
+      legend: {
+        // fontSize: 20,
+        display: false
+      },
+      tooltips: {
+        callbacks: {
+          label: function(tooltipItem) {
+            return tooltipItem.yLabel;
+          }
+        }
+      },
       scale: {
         ticks: {
+          beginAtZero: true,
           suggestedMin: 0,
           suggestedMax: 10
         }
@@ -70,4 +80,12 @@ function barChartConstructor(elementId, promise) {
     // Configuration options go here
     options: {}
   });
+}
+
+function rangeToValue(value) {
+  console.log("HERE");
+  if (value == -1) {
+    return "Off";
+  }
+  return value;
 }
