@@ -1,5 +1,6 @@
 const { promisify } = require("util");
 const Politician = require("../models/Politician");
+const PromiseMade = require("../models/Promise");
 const toTitleCase = require("../utils/toTitleCase");
 const findUsersRating = require("../utils/findUsersRating");
 
@@ -40,7 +41,7 @@ exports.getPolitician = (req, res) => {
 
 /** Return A list of Politicians For search query */
 exports.getListOfPolitician = (req, res, next) => {
-  Politician.find({}, "name _id", function postResponse(err, politicians) {
+  Politician.find({}, "name shortId", function postResponse(err, politicians) {
     if (err) res.send(err);
     res.json(politicians);
   });
@@ -48,11 +49,13 @@ exports.getListOfPolitician = (req, res, next) => {
 
 /** Get a Politicians profile page */
 exports.getPoliticianPage = (req, res) => {
-  Politician.findById(req.params.id, function postResponse(err, politician) {
+  Politician.findOne({ shortId: req.params.shortId }, function postResponse(
+    err,
+    politician
+  ) {
     if (err) {
       res.send(err);
     }
-
     let index = findUsersRating(politician, req.user._id);
     let usersRating = {
       trustworthy: -1,
@@ -65,14 +68,18 @@ exports.getPoliticianPage = (req, res) => {
     if (index != -1) {
       usersRating = politician.characteristics[index];
     }
-
-    delete politician["characteristics"];
-    console.log(politician);
-    res.render("politician", {
-      title: "Politician",
-      polly_id: req.params.id,
-      politician,
-      usersRating
-    });
+    // Note: promiseMade is the schema for promises made by politicians
+    // not the javascript promises asynchronous stuff
+    PromiseMade.find(
+      { politician_id: req.params.shortId },
+      function postResponse(err, promisesMade) {
+        res.render("politician", {
+          title: politician.name,
+          politician,
+          usersRating,
+          promisesMade
+        });
+      }
+    );
   });
 };

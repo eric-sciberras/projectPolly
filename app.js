@@ -187,11 +187,12 @@ app.get(
   passportConfig.isAuthenticated,
   userController.getOauthUnlink
 );
-app.get("/politician/:id", politicianController.getPoliticianPage);
+app.get("/politician/:shortId", politicianController.getPoliticianPage);
 app.get("/add/a/politician", politicianController.getPolitician);
 app.post("/add/a/politician", politicianController.postPolitician);
 app.get("/search/", politicianController.getListOfPolitician);
-app.post("/characteristics/:id", dataController.postCharacteristics);
+app.post("/characteristics/:shortId", dataController.postCharacteristics);
+app.post("/promise/:shortId", dataController.postPromise);
 
 //app.get('/politician/:name',politicianController.getPolitician);
 
