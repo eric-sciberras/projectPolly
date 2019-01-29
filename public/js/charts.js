@@ -1,8 +1,9 @@
+// import { promises } from "fs";
+
 // window.onload = radarChartConstructor;
 
 function radarChartConstructor(politician) {
-  // console.log(politician);
-  var ctx = document.getElementById("myChart").getContext("2d");
+  var ctx = document.getElementById("characteristicsChart").getContext("2d");
   var chart = new Chart(ctx, {
     // The type of chart we want to create
     type: "radar",
@@ -54,8 +55,14 @@ function radarChartConstructor(politician) {
   });
 }
 
-function barChartConstructor(elementId, promise) {
-  var ctx = document.getElementById(elementId).getContext("2d");
+function generateDoughnutCharts(promisesMade) {
+  for (let index = 0; index < promisesMade.length; index++) {
+    doughnutChartConstructor(promisesMade[index], index);
+  }
+}
+
+function doughnutChartConstructor(promise, index) {
+  var ctx = document.getElementById("promiseChart" + index).getContext("2d");
   var chart = new Chart(ctx, {
     // The type of chart we want to create
     type: "doughnut",
@@ -66,14 +73,18 @@ function barChartConstructor(elementId, promise) {
       datasets: [
         {
           label: "My First dataset",
-          backgroundColor: "rgb(255, 99, 132)",
-          borderColor: "rgb(255, 99, 132)",
-          // data: [0, 10, 5, 2, 20]
-          data: [
-            politician.delivered,
-            politician.partiallyDelivered,
-            politician.broken
-          ]
+          backgroundColor: [
+            "rgb(40,167,69)",
+            "rgb(255,193,7)",
+            "rgb(220,53,69)"
+          ],
+          //borderColor: "rgb(255, 99, 132)",
+          data: [40, 10, 5]
+          // data: [
+          //   politician.delivered,
+          //   politician.partiallyDelivered,
+          //   politician.broken
+          // ]
         }
       ]
     },
@@ -83,7 +94,6 @@ function barChartConstructor(elementId, promise) {
 }
 
 function rangeToValue(value) {
-  console.log("HERE");
   if (value == -1) {
     return "Off";
   }
