@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 const shortid = require("shortid");
-// const scrapeTwitter = require("scrape-twitter");
 
 const PoliticianSchema = new mongoose.Schema(
   {
-    _id: {
+    shortId: {
       type: String,
       default: shortid.generate
     },
@@ -14,7 +13,7 @@ const PoliticianSchema = new mongoose.Schema(
     twitterName: String,
     politicalParty: String,
 
-    website: String,
+    // website: String,
     picture: String,
 
     characteristics: [
@@ -29,14 +28,6 @@ const PoliticianSchema = new mongoose.Schema(
       }
     ]
 
-    // promise: [
-    //   {
-    //     body: String,
-    //     source: String,
-    //     protected: Boolean,
-    //     user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
-    //   }
-    // ],
     // view: [
     //   {
     //     body: String,
