@@ -37,10 +37,10 @@ block content
                   .py-3.text-center
                     button.btn.btn-primary(type='button') Edit Profile
                 .col-lg-5
-                  canvas#myChart
+                  canvas#characteristicsChart
                   | From x ratings
                 .col-lg-4
-                  form(action="/characteristics/" + polly_id, method="POST")
+                  form(action="/characteristics/" + politician.shortId, method="POST")
                     input(type='hidden', name='_csrf', value=_csrf)
                     .form-group.text-left
                       label(for='trustworthy') Trustworthy      
@@ -65,74 +65,61 @@ block content
             #profile.tab-pane.fade(role='tabpanel', aria-labelledby='profile-tab')
               // Promises
               #accordion.accordion
-                .card
-                  .card-header
-                    .row
-                      .col
-                        |  One of three columns  One of three columns  One of three columns
-                      .col-lg-auto
-                        .btn-group(role='group', aria-label='Basic example')
-                          button.btn.btn-primary(type='button') Edit
-                          button.btn.btn-success(type='button') +
-                          button.btn.btn-danger(type='button') −
-                  #collapse1.collapse.show(aria-labelledby='heading2', data-parent='#accordion')
-                    .card-body
+                each val, index in promisesMade
+                  .card
+                    .card-header
                       .row
-                        .col-lg-8
-                          p
-                            | Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam semper
-                            | tincidunt
-                            | justo,
-                            | ac tempor mi consectetur vitae. Curabitur tempus enim non felis elementum, a imperdiet massa
-                            | euismod.
-                            | In hac habitasse platea dictumst. Fusce ultrices mi tristique leo vehicula, eget vestibulum
-                            | arcu
-                            | vestibulum.
-                          p Source: www.wikipedia.com
-                        .col-lg-4.text-center
-                          //- img.img-fluid(src='canvas.png')
-                        .col-lg-12.text-center
-                          p Have your say, was this promise:
-                          .btn-group.btn-group-justified.text-centered
-                            .btn-group
-                              button.btn.btn-success(type='button') Achieved
-                            .btn-group
-                              button.btn.btn-warning(type='button') Partially Achieved
-                            .btn-group
-                              button.btn.btn-danger(type='button') Broken
-                .card
-                  .card-header
-                    h5.mb-0
-                      button.btn.btn-link(data-toggle='collapse', data-target='#collapse2', aria-expanded='true', aria-controls='collapse2')
-                        | Promise #2
-                      button.btn.btn-primary.float-right(type='button') Edit
-                  #collapse2.collapse(aria-labelledby='heading2', data-parent='#accordion')
-                    .card-body
-                      .row
-                        .col-lg-8
-                          p
-                            | Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam semper
-                            | tincidunt
-                            | justo,
-                            | ac tempor mi consectetur vitae. Curabitur tempus enim non felis elementum, a imperdiet massa
-                            | euismod.
-                            | In hac habitasse platea dictumst. Fusce ultrices mi tristique leo vehicula, eget vestibulum
-                            | arcu
-                            | vestibulum.
-                          p Source: www.wikipedia.com
-                        .col-lg-4.text-center
-                          //- img.img-fluid(src='canvas.png')
-                        .col-lg-12.text-center
-                          p Have your say, was this promise:
-                          .btn-group.btn-group-justified.text-centered
-                            .btn-group
-                              button.btn.btn-success(type='button') Achieved
-                            .btn-group
-                              button.btn.btn-warning(type='button') Partially Achieved
-                            .btn-group
-                              button.btn.btn-danger(type='button') Broken
+                        .col
+                          button.btn.btn-link(data-toggle='collapse', data-target='#collapse'+index, aria-expanded='true', aria-controls='collapse'+ index)
+                            | #{promisesMade[index].title}
+                        .col-lg-auto
+                          .btn-group(role='group', aria-label='Basic example')
+                            if user.id = promisesMade[0].user_id
+                              button.btn.btn-primary(type='button') Edit
+                            else
+                              button.btn.btn-success(type='button') +
+                              button.btn.btn-danger(type='button') −
+                    .collapse.show(id='collapse'+index, aria-labelledby='heading'+index, data-parent='#accordion')
+                      .card-body
+                        .row
+                          .col-lg-8
+                            p #{promisesMade[index].description}
+                            p Source:  #{promisesMade[index].source}
+                          .col-lg-4.text-center
+                            canvas(id='promiseChart'+ index)
+                          .col-lg-12.text-center
+                            p Have your say, was this promise:
+                            .btn-group.btn-group-justified.text-centered
+                              .btn-group
+                                button.btn.btn-success(type='button') Achieved
+                              .btn-group
+                                button.btn.btn-warning(type='button') Partially Achieved
+                              .btn-group
+                                button.btn.btn-danger(type='button') Broken
               .py-3.text-right
-                button.btn.btn-primary(type='submit') Add Promise
+                button.btn.btn-primary(type='button', data-toggle='modal', data-target='#addPromise') 
+                  | Add Promise
+                #addPromise.modal.fade(tabindex='-1', role='dialog', aria-labelledby='addPromise', aria-hidden='true')
+                  .modal-dialog(role='document')
+                    .modal-content
+                      .modal-header
+                        h5#addPromise.modal-title Add New Promise
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                          span(aria-hidden='true') ×
+                      form(action="/promise/" + politician.shortId, method="POST")
+                        .modal-body
+                          .form-group.text-left
+                            input(type='hidden', name='_csrf', value=_csrf)
+                            label(for='promiseTitle') Title
+                            input.form-control(type='text', name='promiseTitle', id='promiseTitle', placeholder='Title', autofocus, required)
+                            label(for='promiseDescription') Description
+                            textarea.form-control(id='promiseDescription' name='promiseDescription' rows='5', minlength="50",maxlength="500",required)
+                            label(for='promiseSource') Source
+                            textarea.form-control(id='promiseSource' name='promiseSource' rows='2',maxlength="200",required)
+                        .modal-footer
+                          button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                          button.btn.btn-primary(type='submit') Submit
+
             #contact.tab-pane.fade(role='tabpanel', aria-labelledby='contact-tab')
               #accordion2.accordion
                 .card
@@ -175,6 +162,9 @@ block content
                             | arcu
                             | vestibulum.
                           p Source: www.wikipedia.com
+    if promisesMade
+    script.
+        generateDoughnutCharts(!{JSON.stringify(promisesMade)});
     script.
       radarChartConstructor(!{JSON.stringify(politician)});
       document.getElementById("trustworthyOutput").value = rangeToValue(#{usersRating.trustworthy});
