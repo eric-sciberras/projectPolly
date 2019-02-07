@@ -9,193 +9,36 @@ block content
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='name') Name
       .col-md-7
         input.form-control(type='text', name='name', id='name', placeholder='Name', autofocus, required)
-    .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='levelOfGovernment') Level Of Government
-      .col-md-7
-        select.form-control(type='text', name='levelOfGovernment', id='levelOfGovernment', required)
-          option Default select
-          option Federal
-          option State
-          option Local
+    //- .form-group.row
+    //-   label.col-md-3.col-form-label.font-weight-bold.text-right(for='levelOfGovernment') Level Of Government
+    //-   .col-md-7
+    //-     select.form-control(type='text', name='levelOfGovernment', id='levelOfGovernment', required)
+    //-       option(value='', selected='', disabled='', hidden='') Choose One
+    //-       option Federal
+    //-       option State
+    //-       option Local
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='politicalParty') Policical Party
       .col-md-7
-        select.form-control(type='text', name='politicalParty', id='politicalParty', placeholder='Political Party', required)
-            option Default select
-            option Australian Greens
-            option Australian Labor Party
-            option Centre Alliance
-            option Country Liberal Party 
-            option Derryn Hinch's Justice Party
-            option Independent
-            option Katter's Australian Party
-            option Liberal Democratic Party
-            option Liberal National Party 
-            option Liberal Party of Australia
-            option National Party of Australia
-            option Pauline Hanson's One Nation
-            option United Australia Party
+        select.form-control(type='text', name='politicalParty', id='politicalParty',  onchange='checkSelectField(this.value)' ,required)
+          - var politicalParties = ["Australian Greens","Australian Labor Party","Centre Alliance","Country Liberal Party","Derryn Hinch's Justice Party","Independent","Katter's Australian Party","Liberal Democratic Party","Liberal National Party","Liberal Party of Australia","National Party of Australia","Pauline Hanson's One Nation","United Australia Party"]
+          option(value=' ', selected='', disabled='', hidden='') Choose One
+          each val in politicalParties
+            option=val  
+          option(value ='') Other
+        input.form-control.mt-3(placeholder = 'Enter Political Party Here', style={display:'none'}, type='text', name='politicalParty', id='politicalPartyTextField') 
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='electorate') Electorate
       .col-md-7
-        select.form-control(type='text', name='electorate', id='electorate', placeholder='Electorate', required)
-            option Default select
-            option Bean
-            option Canberra
-            option Fenner
-            option Banks
-            option Barton
-            option Bennelong
-            option Berowra
-            option Blaxland
-            option Bradfield
-            option Calare
-            option Chifley
-            option Cook
-            option Cowper
-            option Cunningham
-            option Dobell
-            option Eden-Monaro
-            option Farrer
-            option Fowler
-            option Gilmore
-            option Grayndler
-            option Greenway
-            option Hughes
-            option Hume
-            option Hunter
-            option Kingsford Smith
-            option Lindsay
-            option Lyne
-            option Macarthur
-            option Mackellar
-            option Macquarie
-            option McMahon
-            option Mitchell
-            option Newcastle
-            option New England
-            option North Sydney
-            option Page
-            option Parkes
-            option Parramatta
-            option Paterson
-            option Reid
-            option Richmond
-            option Riverina
-            option Robertson
-            option Shortland
-            option Sydney
-            option Warringah
-            option Watson
-            option Wentworth
-            option Werriwa
-            option Whitlam
-            option Lingiari
-            option Solomon
-            option Blair
-            option Bonner
-            option Bowman
-            option Brisbane
-            option Capricornia
-            option Dawson
-            option Dickson
-            option Fadden
-            option Fairfax
-            option Fisher
-            option Flynn
-            option Forde
-            option Griffith
-            option Groom
-            option Herbert
-            option Hinkler
-            option Kennedy
-            option Leichhardt
-            option Lilley
-            option Longman
-            option Maranoa
-            option McPherson
-            option Moncrieff
-            option Moreton
-            option Oxley
-            option Petrie
-            option Rankin
-            option Ryan
-            option Wide Bay
-            option Wright
-            option Adelaide
-            option Barker
-            option Boothby
-            option Grey
-            option Hindmarsh
-            option Kingston
-            option Makin
-            option Mayo
-            option Spence
-            option Sturt
-            option Bass
-            option Braddon
-            option Clark
-            option Franklin
-            option Lyons
-            option Aston
-            option Ballarat
-            option Bendigo
-            option Bruce
-            option Calwell
-            option Casey
-            option Chisholm
-            option Cooper
-            option Corangamite
-            option Corio
-            option Deakin
-            option Dunkley
-            option Flinders
-            option Fraser
-            option Gellibrand
-            option Gippsland
-            option Goldstein
-            option Gorton
-            option Higgins
-            option Holt
-            option Hotham
-            option Indi
-            option Isaacs
-            option Jagajaga
-            option Kooyong
-            option Lalor
-            option La Trobe
-            option Macnamara
-            option Mallee
-            option Maribyrnong
-            option McEwen
-            option Melbourne
-            option Menzies
-            option Monash
-            option Nicholls
-            option Scullin
-            option Wannon
-            option Wills
-            option Brand
-            option Burt
-            option Canning
-            option Cowan
-            option Curtin
-            option Durack
-            option Forrest
-            option Fremantle
-            option Hasluck
-            option Moore
-            option O'Connor
-            option Pearce
-            option Perth
-            option Stirling
-            option Swan
-            option Tangney
-
+        select.form-control(type='text', name='electorate', id='electorate', placeholder='Electorate',required)
+          - var electorates = ['Bean', 'Canberra', 'Fenner', 'Banks', 'Barton', 'Bennelong', 'Berowra', 'Blaxland', 'Bradfield', 'Calare', 'Chifley', 'Cook', 'Cowper', 'Cunningham', 'Dobell', 'Eden-Monaro', 'Farrer', 'Fowler', 'Gilmore', 'Grayndler', 'Greenway', 'Hughes', 'Hume', 'Hunter', 'Kingsford Smith', 'Lindsay', 'Lyne', 'Macarthur', 'Mackellar', 'Macquarie', 'McMahon', 'Mitchell', 'Newcastle', 'New England', 'North Sydney', 'Page', 'Parkes', 'Parramatta', 'Paterson', 'Reid', 'Richmond', 'Riverina', 'Robertson', 'Shortland', 'Sydney', 'Warringah', 'Watson', 'Wentworth', 'Werriwa', 'Whitlam', 'Lingiari', 'Solomon', 'Blair', 'Bonner', 'Bowman', 'Brisbane', 'Capricornia', 'Dawson', 'Dickson', 'Fadden', 'Fairfax', 'Fisher', 'Flynn', 'Forde', 'Griffith', 'Groom', 'Herbert', 'Hinkler', 'Kennedy', 'Leichhardt', 'Lilley', 'Longman', 'Maranoa', 'McPherson', 'Moncrieff', 'Moreton', 'Oxley', 'Petrie', 'Rankin', 'Ryan', 'Wide Bay', 'Wright', 'Adelaide', 'Barker', 'Boothby', 'Grey', 'Hindmarsh', 'Kingston', 'Makin', 'Mayo', 'Spence', 'Sturt', 'Bass', 'Braddon', 'Clark', 'Franklin', 'Lyons', 'Aston', 'Ballarat', 'Bendigo', 'Bruce', 'Calwell', 'Casey', 'Chisholm', 'Cooper', 'Corangamite', 'Corio', 'Deakin', 'Dunkley', 'Flinders', 'Fraser', 'Gellibrand', 'Gippsland', 'Goldstein', 'Gorton', 'Higgins', 'Holt', 'Hotham', 'Indi', 'Isaacs', 'Jagajaga', 'Kooyong', 'Lalor', 'La Trobe', 'Macnamara', 'Mallee', 'Maribyrnong', 'McEwen', 'Melbourne', 'Menzies', 'Monash', 'Nicholls', 'Scullin', 'Wannon', 'Wills', 'Brand', 'Burt', 'Canning', 'Cowan', 'Curtin', 'Durack', 'Forrest', 'Fremantle', 'Hasluck', 'Moore', "O'Connor", 'Pearce', 'Perth', 'Stirling', 'Swan', 'Tangney']
+          option(value='', selected='', disabled='', hidden='') Choose One
+          each val in electorates
+            option=val
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='title') Current title
       .col-md-7
-        input.form-control(type='text', name='title', id='title', placeholder='title', required) 
+        input.form-control(type='text', name='title', id='title', placeholder='Title', required) 
         small.form-text.text-muted
           | Current political title e.g. Minister/shadow minister for..., Lord Mayor, Candidate.
     .form-group.row
@@ -213,3 +56,12 @@ block content
     .form-group
       .offset-sm-3.col-md-7.pl-2
         hr
+
+  script.
+    function checkSelectField(val){
+      var element=document.getElementById('politicalPartyTextField');
+      if(val=='')
+        element.style.display='block';
+      else
+        element.style.display='none';
+    } 
