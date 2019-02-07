@@ -2,25 +2,23 @@ extends layout
   
 block content
     script(src='/js/charts.js')
-    .container.text-center.py-3
+    .container-fluid.text-center.py-3
       .row.justify-content-center
-        .col-lg-10
+        .col-12.col-sm-12.col-md-12.col-lg-12
           .row
             .col-lg-3.align-self-center
               img.img-fluid(src='https://twitter.com/'+ politician.twitterName + '/profile_image?size=original', alt='Responsive image' , width="110", height="110")
             .col-lg-9
               h1.py-2 #{politician.name}
-              
-
               ul#myTab.nav.nav-tabs(role='tablist').align-items-end
                 li.nav-item
-                  a#home-tab.nav-link.active(data-toggle='tab', href='#home', role='tab', aria-controls='home', aria-selected='true') Overview
+                  a#overview-tab.nav-link.active(data-toggle='tab', href='#overview', role='tab', aria-controls='overview', aria-selected='true') Overview
                 li.nav-item
-                  a#profile-tab.nav-link(data-toggle='tab', href='#profile', role='tab', aria-controls='profile', aria-selected='false') Promises
+                  a#promises-tab.nav-link(data-toggle='tab', href='#promises', role='tab', aria-controls='promises', aria-selected='false') Promises
                 li.nav-item
-                  a#contact-tab.nav-link(data-toggle='tab', href='#contact', role='tab', aria-controls='contact', aria-selected='false') Views
-          #myTabContent.tab-content.profile-tab.py-3
-            #home.tab-pane.fade.show.active(role='tabpanel', aria-labelledby='home-tab')
+                  a#views-tab.nav-link(data-toggle='tab', href='#views', role='tab', aria-controls='views', aria-selected='false') Views
+          #myTabContent.tab-content.promises-tab.py-3
+            #overview.tab-pane.fade.show.active(role='tabpanel', aria-labelledby='overview-tab')
               .row
                 .col-lg-3.text-left
 
@@ -35,78 +33,207 @@ block content
                       h5.mb-1.font-weight-bold Electorate
                       p.mb-1   #{politician.electorate}
                   .py-3.text-center
-                    button.btn.btn-primary(type='button') Edit Profile
+                    if !user
+                      button.btn.btn-primary(type='submit',disabled='') Login to Edit Profile
+                    else
+                      button.btn.btn-primary(type='button', data-toggle='modal', data-target='#editProfile1') Edit Profile
+                    
+                    #editProfile1.modal.fade(tabindex='-1', role='dialog', aria-labelledby='editProfile1', aria-hidden='true')
+                      .modal-dialog.modal-dialog-centered(role='document')
+                        .modal-content
+                          .modal-header
+                            h5#addPromise.modal-title Edit Profile
+                            button.close(type='button', data-dismiss='modal', aria-label='Close')
+                              span(aria-hidden='true') ×
+                          form(action="/editPolitician/" + politician._id, method="POST")
+                            .modal-body
+
+                              .form-group.text-center
+
+                                input(type='hidden', name='_csrf', value=_csrf)
+                                
+                              .form-group.row
+                                label.col-md-3.col-form-label.font-weight-bold(for='title') Current title
+                                .col-md-7
+                                  input.form-control(type='text', name='title', id='title', placeholder='Title', value = politician.title, required) 
+                                  small.form-text.text-muted
+                                    | Current political title e.g. Minister/shadow minister for..., Lord Mayor, Candidate.
+                              
+                              .form-group.row
+                                label.col-md-3.col-form-label.font-weight-bold(for='electorate') Electorate
+                                .col-md-7
+                                  select.form-control(type='text', name='electorate', id='electorate', placeholder='Electorate',required)
+                                    - var electorates = ['Bean', 'Canberra', 'Fenner', 'Banks', 'Barton', 'Bennelong', 'Berowra', 'Blaxland', 'Bradfield', 'Calare', 'Chifley', 'Cook', 'Cowper', 'Cunningham', 'Dobell', 'Eden-Monaro', 'Farrer', 'Fowler', 'Gilmore', 'Grayndler', 'Greenway', 'Hughes', 'Hume', 'Hunter', 'Kingsford Smith', 'Lindsay', 'Lyne', 'Macarthur', 'Mackellar', 'Macquarie', 'McMahon', 'Mitchell', 'Newcastle', 'New England', 'North Sydney', 'Page', 'Parkes', 'Parramatta', 'Paterson', 'Reid', 'Richmond', 'Riverina', 'Robertson', 'Shortland', 'Sydney', 'Warringah', 'Watson', 'Wentworth', 'Werriwa', 'Whitlam', 'Lingiari', 'Solomon', 'Blair', 'Bonner', 'Bowman', 'Brisbane', 'Capricornia', 'Dawson', 'Dickson', 'Fadden', 'Fairfax', 'Fisher', 'Flynn', 'Forde', 'Griffith', 'Groom', 'Herbert', 'Hinkler', 'Kennedy', 'Leichhardt', 'Lilley', 'Longman', 'Maranoa', 'McPherson', 'Moncrieff', 'Moreton', 'Oxley', 'Petrie', 'Rankin', 'Ryan', 'Wide Bay', 'Wright', 'Adelaide', 'Barker', 'Boothby', 'Grey', 'Hindmarsh', 'Kingston', 'Makin', 'Mayo', 'Spence', 'Sturt', 'Bass', 'Braddon', 'Clark', 'Franklin', 'Lyons', 'Aston', 'Ballarat', 'Bendigo', 'Bruce', 'Calwell', 'Casey', 'Chisholm', 'Cooper', 'Corangamite', 'Corio', 'Deakin', 'Dunkley', 'Flinders', 'Fraser', 'Gellibrand', 'Gippsland', 'Goldstein', 'Gorton', 'Higgins', 'Holt', 'Hotham', 'Indi', 'Isaacs', 'Jagajaga', 'Kooyong', 'Lalor', 'La Trobe', 'Macnamara', 'Mallee', 'Maribyrnong', 'McEwen', 'Melbourne', 'Menzies', 'Monash', 'Nicholls', 'Scullin', 'Wannon', 'Wills', 'Brand', 'Burt', 'Canning', 'Cowan', 'Curtin', 'Durack', 'Forrest', 'Fremantle', 'Hasluck', 'Moore', "O'Connor", 'Pearce', 'Perth', 'Stirling', 'Swan', 'Tangney']
+                                    each val in electorates
+                                      if val == politician.electorate
+                                        option(selected="selected")=val
+                                      else
+                                        option=val  
+                              .form-group.row
+                                  label.col-md-3.col-form-label.font-weight-bold(for='politicalParty') Policical Party
+                                  .col-md-7
+                                    select.form-control(type='text', name='politicalParty', id='politicalParty',  onchange='checkSelectField(this.value)' ,required)
+                                      - var politicalParties = ['Australian Greens',"Australian Labor Party","Centre Alliance","Country Liberal Party","Derryn Hinch's Justice Party","Independent","Katter's Australian Party","Liberal Democratic Party","Liberal National Party","Liberal Party of Australia","National Party of Australia","Pauline Hanson's One Nation","United Australia Party"]
+                                      option(value=' ', selected='', disabled='', hidden='') Choose One
+                                      each val in politicalParties
+                                        if val == politician.politicalParty
+                                          option(selected="selected")=val
+                                        else
+                                          option=val  
+                                      option(value ='') Other
+                                    input.form-control.mt-3(placeholder = 'Enter Political Party Here', style={display:'none'}, type='text', name='politicalParty', id='politicalPartyTextField') 
+                              .form-group.row
+                                label.col-md-3.col-form-label.font-weight-bold(for='twitterHandle') Twitter Handle (optional)
+                                .col-md-7
+                                  input.form-control(type='text', name='twitterHandle', id='twitterHandle', placeholder='Twitter Handle', value=politician.twitterName) 
+                                  small.form-text.text-muted
+                                    | The twitter handle is used to grab the politicians profile picture
+                            .modal-footer
+                              button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                              button.btn.btn-primary(type='submit') Submit
                 .col-lg-5
                   canvas#characteristicsChart
-                  | From x ratings
+                  if averageRatings
+                    case averageRatings.count
+                      when 0
+                        p No ratings yet
+                      when 1
+                        p From #{averageRatings.count} rating
+                      default
+                        p From #{averageRatings.count}  ratings 
                 .col-lg-4
-                  form(action="/characteristics/" + politician.shortId, method="POST")
+                  form(action="/characteristics/" + politician._id, method="POST")
                     input(type='hidden', name='_csrf', value=_csrf)
                     .form-group.text-left
                       label(for='trustworthy') Trustworthy      
                       output.badge.badge-pill.badge-primary#trustworthyOutput.float-right(name='trustworthyOutput') off
-                      input.custom-range(type='range', name='trustworthy', id='trustworthy', value=usersRating.trustworthy ,min='-1', max='10', step='1', onInput='trustworthyOutput.value = rangeToValue(trustworthy.value)')
+                      input.custom-range(type='range', name='trustworthy', id='trustworthy', value = usersRating && usersRating.trustworthy!=null ? usersRating.trustworthy  : '-1'   ,min='-1', max='10', step='1', onInput='trustworthyOutput.value = rangeToValue(trustworthy.value)')
                       label(for='accountable') Accountable
                       output.badge.badge-pill.badge-primary#accountableOutput.float-right(name='accountableOutput') off
-                      input.custom-range(type='range', name='accountable', id='accountable', value=usersRating.accountable  ,min='-1', max='10', step='1'  oninput='accountableOutput.value = rangeToValue(accountable.value)')
+                      input.custom-range(type='range', name='accountable', id='accountable', value = usersRating && usersRating.accountable!=null ? usersRating.accountable  : '-1'   ,min='-1', max='10', step='1',  oninput='accountableOutput.value = rangeToValue(accountable.value)')
                       label(for='empathetic') Empathetic
                       output.badge.badge-pill.badge-primary#empatheticOutput.float-right(name='empatheticOutput') off
-                      input.custom-range(type='range', name='empathetic', id='empathetic', value=usersRating.empathetic ,min='-1', max='10', step='1'  oninput='empatheticOutput.value = rangeToValue(empathetic.value)')
+                      input.custom-range(type='range', name='empathetic', id='empathetic', value = usersRating && usersRating.empathetic!=null ? usersRating.empathetic  : '-1'  ,min='-1', max='10', step='1',  oninput='empatheticOutput.value = rangeToValue(empathetic.value)')
                       label(for='knowledgeable') Knowledgeable
                       output.badge.badge-pill.badge-primary#knowledgeableOutput.float-right(name='knowledgeableOutput') off
-                      input.custom-range(type='range', name='knowledgeable', id='knowledgeable', value=usersRating.knowledgeable ,min='-1', max='10', step='1'  oninput='knowledgeableOutput.value = rangeToValue(knowledgeable.value)')
+                      input.custom-range(type='range', name='knowledgeable', id='knowledgeable', value = usersRating && usersRating.knowledgeable!=null ? usersRating.knowledgeable  : '-1'  ,min='-1', max='10', step='1',  oninput='knowledgeableOutput.value = rangeToValue(knowledgeable.value)')
                       label(for='respectful') Respectful
                       output.badge.badge-pill.badge-primary#respectfulOutput.float-right(name='respectfulOutput') off
-                      input.custom-range(type='range', name='respectful', id='respectful', value=usersRating.respectful ,min='-1', max='10', step='1'  oninput='respectfulOutput.value = rangeToValue(respectful.value)')
-                      if !user
-                        button.btn.btn-primary(type='submit',disabled='') Login to vote
-                      else
-                        button.btn.btn-primary(type='submit') Submit
-            #profile.tab-pane.fade(role='tabpanel', aria-labelledby='profile-tab')
+                      input.custom-range(type='range', name='respectful', id='respectful',value = usersRating && usersRating.respectful!=null ? usersRating.respectful : '-1' ,min='-1', max='10', step='1',  oninput='respectfulOutput.value = rangeToValue(respectful.value)')
+                    if !user
+                      button.btn.btn-primary(type='submit',disabled='') Login to vote
+                    else
+                      button.btn.btn-primary(type='submit') Submit
+            #promises.tab-pane.fade(role='tabpanel', aria-labelledby='promises-tab')
               // Promises
               #accordion.accordion
-                each val, index in promisesMade
+                each val, index in promises
                   .card
                     .card-header
                       .row
                         .col
                           button.btn.btn-link(data-toggle='collapse', data-target='#collapse'+index, aria-expanded='true', aria-controls='collapse'+ index)
-                            | #{promisesMade[index].title}
+                            | #{promises[index].title}
                         .col-lg-auto
-                          .btn-group(role='group', aria-label='Basic example')
-                            if user.id = promisesMade[0].user_id
-                              button.btn.btn-primary(type='button') Edit
+                          output.badge.badge-pill.badge-primary.mr-2(style={ 'font-size': '16px'},name='knowledgeableOutput') #{promises[index].reputation}
+                          if user && (user.id == promises[index].author)
+                            button.btn.btn-primary(type='button', data-toggle='modal', data-target='#editPromise'+index) Edit
+                            .modal.fade(id ='editPromise'+index tabindex='-1', role='dialog', aria-labelledby='editPromise'+index, aria-hidden='true')
+                              .modal-dialog.modal-dialog-centered(role='document')
+                                .modal-content
+                                  .modal-header
+                                    h5#addPromise.modal-title Edit Promise
+                                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                                      span(aria-hidden='true') ×
+                                  form(action="/editPromise/" + politician._id + '/' + promises[index]._id, method="POST")
+                                    .modal-body
+                                      .form-group.text-left
+                                        input(type='hidden', name='_csrf', value=_csrf)
+                                        label(for='promiseTitle') Title
+                                        input.form-control(type='text', name='promiseTitle', id='promiseTitle', placeholder='Title', autofocus, required, value= promises[index].title)
+                                        label(for='promiseDescription') Description
+                                        textarea.form-control(id='promiseDescription' name='promiseDescription' rows='5', minlength="50",maxlength="500",required) #{promises[index].description}
+                                        label(for='promiseSource') Source
+                                        textarea.form-control(id='promiseSource' name='promiseSource' rows='2',maxlength="200", required) #{promises[index].source}
+                                    .modal-footer.float-left
+                                     button.btn.btn-danger(type='button', data-toggle='modal', data-target='#deletePromise'+index) Delete
+
+                                    .modal-footer
+                                      button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                                      button.btn.btn-primary(type='submit') Submit
+
+                                  .modal.fade(id ='deletePromise'+index,tabindex='-1', role='dialog', aria-labelledby='deletePromiseTitle'+index, aria-hidden='true')
+                                    .modal-dialog.modal-dialog-centered.modal-sm(role='document')
+                                      .modal-content
+                                        .modal-header
+                                          h5.modal-title(id='#deletePromiseTitle'+index) Are you Sure?
+                                          button.close(type='button', data-dismiss='modal', aria-label='Close')
+                                            span(aria-hidden='true') ×
+                                        .modal-footer
+                                          form(action="/deletePromise/" + politician._id + '/' + promises[index]._id, method="POST")
+                                            input(type='hidden', name='_csrf', value=_csrf)
+                                            button.btn.btn-danger(type='submit') Delete
+                          else
+                            if !user
+                              .btn-group(role='group', aria-label='Basic example')
+                                form()
+                                  button.btn.mr-2.btn-outline-success(disabled='') +
+                                form()
+                                  button.btn.btn-outline-danger(disabled='') −
                             else
-                              button.btn.btn-success(type='button') +
-                              button.btn.btn-danger(type='button') −
+                                .btn-group(role='group', aria-label='Basic example')
+                                  form(action='/promise/' +  politician._id  + '/repVote/' + promises[index]._id, method='post')
+                                      input(type='hidden', name='_csrf', value=_csrf)
+                                      button.btn.mr-2(class =  (promises[index].reputationVote && promises[index].reputationVote.length)  && promises[index].reputationVote[0].vote == '1' ? "btn-success" : "btn-outline-success",name='vote', value =  (promises[index].reputationVote && promises[index].reputationVote.length) && promises[index].reputationVote[0].vote == '1' ? ' ' : '1' ) +
+                                  form(action='/promise/' +  politician._id  + '/repVote/' + promises[index]._id, method='post') 
+                                      input(type='hidden', name='_csrf', value=_csrf)
+                                      button.btn(class = (promises[index].reputationVote && promises[index].reputationVote.length) && promises[index].reputationVote[0].vote == '-1' ? "btn-danger" : "btn-outline-danger",name='vote', value = (promises[index].reputationVote && promises[index].reputationVote.length) && promises[index].reputationVote[0].vote == '-1' ? ' ' : '-1' ) −
+                                 
+                                
                     .collapse.show(id='collapse'+index, aria-labelledby='heading'+index, data-parent='#accordion')
                       .card-body
                         .row
-                          .col-lg-8
-                            p #{promisesMade[index].description}
-                            p Source:  #{promisesMade[index].source}
-                          .col-lg-4.text-center
+                          .col-lg-8.col-md-7.col-sm-12.col-12.align-self-center.text-left
+
+                            p #{promises[index].description}
+                            h4 Source
+                            p #{promises[index].source}
+                          .col-lg-4.col-md-5.col-sm-8.col-8
                             canvas(id='promiseChart'+ index)
                           .col-lg-12.text-center
-                            p Have your say, was this promise:
-                            .btn-group.btn-group-justified.text-centered
-                              .btn-group
-                                button.btn.btn-success(type='button') Achieved
-                              .btn-group
-                                button.btn.btn-warning(type='button') Partially Achieved
-                              .btn-group
-                                button.btn.btn-danger(type='button') Broken
+                            if !user
+                              p Login to have your say on this promise: 
+                                .btn-group(role='group', aria-label='Basic example')
+                                  form() 
+                                    button.btn.mr-2.btn-outline-success(disabled='') Delivered
+                                    button.btn.mr-2.btn-outline-warning(disabled='') Partially Achieved
+                                    button.btn.btn-outline-danger(disabled='') Broken
+                            else
+                              p Have your say, was this promise: 
+                              .btn-group(role='group', aria-label='Basic example')
+                                form(action='/promise/' +  politician._id  + '/vote/' + promises[index]._id, method='post') 
+                                  input(type='hidden', name='_csrf', value=_csrf)
+                                  button.btn.mr-2(class =  promises[index].promiseVote[0] && promises[index].promiseVote[0].vote == '1' ? "btn-success" : "btn-outline-success",name='vote', value = promises[index].promiseVote[0] && promises[index].promiseVote[0].vote == '1' ? ' ' : '1' ) Delivered
+                                form(action='/promise/' +  politician._id  + '/vote/' + promises[index]._id, method='post') 
+                                  input(type='hidden', name='_csrf', value=_csrf)
+                                  button.btn.mr-2(class =    promises[index].promiseVote[0] && promises[index].promiseVote[0].vote == '0' ? "btn-warning" : "btn-outline-warning", type='submit',name='vote', value= promises[index].promiseVote[0] && promises[index].promiseVote[0].vote == '0' ? ' ' : '0'    ) Partially Achieved
+                                form(action='/promise/' +  politician._id  + '/vote/' + promises[index]._id, method='post') 
+                                  input(type='hidden', name='_csrf', value=_csrf)
+                                  button.btn(class =    promises[index].promiseVote[0] && promises[index].promiseVote[0].vote == '-1' ? "btn-danger" : "btn-outline-danger",type='submit',name='vote', value= promises[index].promiseVote[0] && promises[index].promiseVote[0].vote == '-1' ? ' ' : '-1')  Broken
               .py-3.text-right
-                button.btn.btn-primary(type='button', data-toggle='modal', data-target='#addPromise') 
-                  | Add Promise
-                #addPromise.modal.fade(tabindex='-1', role='dialog', aria-labelledby='addPromise', aria-hidden='true')
-                  .modal-dialog(role='document')
+                if !user
+                      button.btn.btn-primary(type='submit',disabled='') Login to Add Promise
+                else
+                  button.btn.btn-primary(type='button', data-toggle='modal', data-target='#addPromise1') 
+                    | Add Promise
+                #addPromise1.modal.fade(tabindex='-1', role='dialog', aria-labelledby='addPromise1', aria-hidden='true')
+                  .modal-dialog.modal-dialog-centered(role='document')
                     .modal-content
                       .modal-header
                         h5#addPromise.modal-title Add New Promise
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
                           span(aria-hidden='true') ×
-                      form(action="/promise/" + politician.shortId, method="POST")
+                      form(action="/promise/" + politician._id, method="POST")
                         .modal-body
                           .form-group.text-left
                             input(type='hidden', name='_csrf', value=_csrf)
@@ -120,55 +247,129 @@ block content
                           button.btn.btn-secondary(type='button', data-dismiss='modal') Close
                           button.btn.btn-primary(type='submit') Submit
 
-            #contact.tab-pane.fade(role='tabpanel', aria-labelledby='contact-tab')
+            #views.tab-pane.fade(role='tabpanel', aria-labelledby='views-tab')
               #accordion2.accordion
-                .card
-                  .card-header
-                    h5.mb-0
-                      button.btn.btn-link(data-toggle='collapse', data-target='#view1', aria-expanded='true', aria-controls='view1')
-                        | View #1
-                      button.btn.btn-primary.float-right(type='button') Edit
-                  #view1.collapse.show(aria-labelledby='view1', data-parent='#accordion2')
-                    .card-body
+                 
+                each val, index in views
+                  .card
+                    .card-header
                       .row
-                        .col-lg-12
-                          p
-                            | Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam semper
-                            | tincidunt
-                            | justo,
-                            | ac tempor mi consectetur vitae. Curabitur tempus enim non felis elementum, a imperdiet massa
-                            | euismod.
-                            | In hac habitasse platea dictumst. Fusce ultrices mi tristique leo vehicula, eget vestibulum
-                            | arcu
-                            | vestibulum.
-                          p Source: www.wikipedia.com
-                .card
-                  .card-header
-                    h5.mb-0
-                      button.btn.btn-link(data-toggle='collapse', data-target='#view2', aria-expanded='true', aria-controls='view2')
-                        | View #2
-                      button.btn.btn-primary.float-right(type='button') Edit
-                  #view2.collapse(aria-labelledby='view2', data-parent='#accordion2')
-                    .card-body
-                      .row
-                        .col-lg-12
-                          p
-                            | Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam semper
-                            | tincidunt
-                            | justo,
-                            | ac tempor mi consectetur vitae. Curabitur tempus enim non felis elementum, a imperdiet massa
-                            | euismod.
-                            | In hac habitasse platea dictumst. Fusce ultrices mi tristique leo vehicula, eget vestibulum
-                            | arcu
-                            | vestibulum.
-                          p Source: www.wikipedia.com
-    if promisesMade
+                        .col
+                          button.btn.btn-link(data-toggle='collapse', data-target='#collapse'+index, aria-expanded='true', aria-controls='collapse'+ index)
+                            | #{views[index].title}
+                        .col-lg-auto
+                          output.badge.badge-pill.badge-primary.mr-2(style={ 'font-size': '16px'}) #{views[index].reputation}
+                          if user && (user.id == views[index].author)
+                            button.btn.btn-primary(type='button', data-toggle='modal', data-target='#editView'+index) Edit
+                            .modal.fade(id ='editView'+index tabindex='-1', role='dialog', aria-labelledby='editView'+index, aria-hidden='true')
+                              .modal-dialog.modal-dialog-centered(role='document')
+                                .modal-content
+                                  .modal-header
+                                    h5#addView.modal-title Edit View
+                                    button.close(type='button', data-dismiss='modal', aria-label='Close')
+                                      span(aria-hidden='true') ×
+                                  form(action="/editView/" + politician._id + '/' + views[index]._id, method="POST")
+                                    .modal-body
+                                      .form-group.text-left
+                                        input(type='hidden', name='_csrf', value=_csrf)
+                                        label(for='viewTitle') Title
+                                        input.form-control(type='text', name='viewTitle', id='viewTitle', placeholder='Title', autofocus, required, value= views[index].title)
+                                        label(for='viewDescription') Description
+                                        textarea.form-control(id='viewDescription' name='viewDescription' rows='5', minlength="50",maxlength="500",required) #{views[index].description}
+                                        label(for='viewSource') Source
+                                        textarea.form-control(id='vieweSource' name='viewSource' rows='2',maxlength="200", required) #{views[index].source}
+                                    .modal-footer.float-left
+                                     button.btn.btn-danger(type='button', data-toggle='modal', data-target='#deleteView'+index) Delete
+
+                                    .modal-footer
+                                      button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                                      button.btn.btn-primary(type='submit') Submit
+
+                                  .modal.fade(id ='deleteView'+index,tabindex='-1', role='dialog', aria-labelledby='deleteViewTitle'+index, aria-hidden='true')
+                                    .modal-dialog.modal-dialog-centered.modal-sm(role='document')
+                                      .modal-content
+                                        .modal-header
+                                          h5.modal-title(id='#deleteViewTitle'+index) Are you Sure?
+                                          button.close(type='button', data-dismiss='modal', aria-label='Close')
+                                            span(aria-hidden='true') ×
+                                        .modal-footer
+                                          form(action="/deleteView/" + politician._id + '/' + views[index]._id, method="POST")
+                                            input(type='hidden', name='_csrf', value=_csrf)
+                                            button.btn.btn-danger(type='submit') Delete
+                          else
+                            if !user
+                              .btn-group(role='group', aria-label='Basic example')
+                                form()
+                                  button.btn.mr-2.btn-outline-success(disabled='') +
+                                form()
+                                  button.btn.btn-outline-danger(disabled='') −
+                            else
+                              .btn-group(role='group', aria-label='Basic example')
+                                form(action='/view/' +  politician._id  + '/repVote/' + views[index]._id, method='post')
+                                    input(type='hidden', name='_csrf', value=_csrf)
+                                    button.btn.mr-2(class = (views[index].reputationVote && views[index].reputationVote.length) && views[index].reputationVote[0].vote == '1' ? "btn-success" : "btn-outline-success",name='vote', value = (views[index].reputationVote && views[index].reputationVote.length) && views[index].reputationVote[0].vote == '1' ? ' ' : '1' ) +
+                                form(action='/view/' +  politician._id  + '/repVote/' + views[index]._id, method='post') 
+                                    input(type='hidden', name='_csrf', value=_csrf)
+                                    button.btn(class = (views[index].reputationVote && views[index].reputationVote.length) && views[index].reputationVote[0].vote == '-1' ? "btn-danger" : "btn-outline-danger",name='vote', value = (views[index].reputationVote && views[index].reputationVote.length) && views[index].reputationVote[0].vote == '-1' ? ' ' : '-1' ) −                   
+                    .collapse.show(id='collapse'+index, aria-labelledby='heading'+index, data-parent='#accordion')
+                      .card-body
+                        .row.justify-content-center
+                          .col-lg-8.col-md-7.col-sm-12.col-12.align-self-center
+                            p #{views[index].description}
+                            p Source:  #{views[index].source}
+                          .col-lg-12.text-center
+              .py-3.text-right
+                if !user
+                      button.btn.btn-primary(type='submit',disabled='') Login to Add View
+                else
+                  button.btn.btn-primary(type='button', data-toggle='modal', data-target='#addView1') 
+                    | Add View
+                #addView1.modal.fade(tabindex='-1', role='dialog', aria-labelledby='addView1', aria-hidden='true')
+                  .modal-dialog.modal-dialog-centered(role='document')
+                    .modal-content
+                      .modal-header
+                        h5#addView.modal-title Add New View
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                          span(aria-hidden='true') ×
+                      form(action="/view/" + politician._id, method="POST")
+                        .modal-body
+                          .form-group.text-left
+                            input(type='hidden', name='_csrf', value=_csrf)
+                            label(for='viewTitle') Title
+                            input.form-control(type='text', name='viewTitle', id='viewTitle', placeholder='Title', autofocus, required)
+                            label(for='viewDescription') Description
+                            textarea.form-control(id='viewDescription' name='viewDescription' rows='5', minlength="50",maxlength="500",required)
+                            label(for='viewSource') Source
+                            textarea.form-control(id='viewSource' name='viewSource' rows='2',maxlength="200",required)
+                        .modal-footer
+                          button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                          button.btn.btn-primary(type='submit') Submit
+    if promises
+      script.
+        generateDoughnutCharts(!{JSON.stringify(promises)});
+    if usersRating
+      script.
+        document.getElementById("trustworthyOutput").value = rangeToValue(#{usersRating.trustworthy});
+        document.getElementById("accountableOutput").value = rangeToValue(#{usersRating.accountable});
+        document.getElementById("empatheticOutput").value = rangeToValue(#{usersRating.empathetic});
+        document.getElementById("knowledgeableOutput").value = rangeToValue(#{usersRating.knowledgeable});
+        document.getElementById("respectfulOutput").value = rangeToValue(#{usersRating.respectful}); 
     script.
-        generateDoughnutCharts(!{JSON.stringify(promisesMade)});
-    script.
-      radarChartConstructor(!{JSON.stringify(politician)});
-      document.getElementById("trustworthyOutput").value = rangeToValue(#{usersRating.trustworthy});
-      document.getElementById("accountableOutput").value = rangeToValue(#{usersRating.accountable});
-      document.getElementById("empatheticOutput").value = rangeToValue(#{usersRating.empathetic});
-      document.getElementById("knowledgeableOutput").value = rangeToValue(#{usersRating.knowledgeable});
-      document.getElementById("respectfulOutput").value = rangeToValue(#{usersRating.respectful}); 
+      //- check if this code is safe 
+      // console.log(!{JSON.stringify(promises)})
+      radarChartConstructor(!{JSON.stringify(averageRatings)});
+      $( document ).ready(function() {
+        var url = window.location.href;
+        if (url.indexOf("#") > 0){
+          var activeTab = url.substring(url.indexOf("#") + 1);
+          $('.nav[role="tablist"] a[href="#'+activeTab+'"]').tab('show');
+        }
+      })
+        
+      function checkSelectField(val){
+        var element=document.getElementById('politicalPartyTextField');
+        if(val=='')
+          element.style.display='block';
+        else
+          element.style.display='none';
+      } 
