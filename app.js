@@ -33,7 +33,9 @@ const homeController = require("./controllers/home");
 const userController = require("./controllers/user");
 const contactController = require("./controllers/contact");
 const politicianController = require("./controllers/politician");
-const dataController = require("./controllers/data");
+const promiseMadeController = require("./controllers/promiseMade");
+const viewController = require("./controllers/view");
+const characteristicsController = require("./controllers/charateristics");
 
 /**
  * API keys and Passport configuration.
@@ -187,12 +189,30 @@ app.get(
   passportConfig.isAuthenticated,
   userController.getOauthUnlink
 );
+app.get("/addPolitician", politicianController.getAddPoliticianPage);
+app.post("/addPolitician", politicianController.postPolitician);
+app.get("/search/", politicianController.getListOfPoliticians);
 app.get("/politician/:shortId", politicianController.getPoliticianPage);
-app.get("/add/a/politician", politicianController.getPolitician);
-app.post("/add/a/politician", politicianController.postPolitician);
-app.get("/search/", politicianController.getListOfPolitician);
-app.post("/characteristics/:shortId", dataController.postCharacteristics);
-app.post("/promise/:shortId", dataController.postPromise);
+app.post("/editPolitician/:shortId", politicianController.editPolitician);
+
+app.post(
+  "/characteristics/:shortId",
+  characteristicsController.postCharacteristics
+);
+app.post("/promise/:shortId", promiseMadeController.postPromise);
+app.post("/editPromise/:shortId/:id", promiseMadeController.editPromise);
+app.post("/promise/:shortId/vote/:_id", promiseMadeController.postPromiseVote);
+app.get("/promiseData", promiseMadeController.getPromiseData);
+app.post("/deletePromise/:shortId/:id", promiseMadeController.deletePromise);
+app.post(
+  "/promise/:shortId/repVote/:_id",
+  promiseMadeController.postReputationVote
+);
+
+app.post("/view/:shortId", viewController.postView);
+app.post("/editView/:shortId/:id", viewController.editView);
+app.post("/deleteView/:shortId/:id", viewController.deleteView);
+app.post("/View/:shortId/repVote/:_id", viewController.postReputationVote);
 
 //app.get('/politician/:name',politicianController.getPolitician);
 
