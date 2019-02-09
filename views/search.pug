@@ -1,0 +1,26 @@
+extends layout  
+
+block content
+
+  h1 Search Results
+    section
+      each val,index in politicians
+        .container-auto.py-3
+          .card.bg-light.py-3
+            .row
+              .col-md-2.align-self-center.text-center
+                img.img-fluid(src='profile.jpeg')
+              .col-md-3.px-3.align-self-center.text-center
+                .card-block.px-3
+                  h6.card-title #{politicians[index].name}
+                  h6.card-text  #{politicians[index].title}
+                  h6.card-text  #{politicians[index].politicalParty}
+                  h6.card-text #{politicians[index].electorate}
+                  
+              .col-md-3.px-3.align-self-center.text-center
+                .card-block.px-3
+                  a.btn.btn-primary(href='/politician/'+ politicians[index]._id) View
+    .jumbotron.jumbotron-fluid
+      .container
+        p.lead Can't find the Politician you are looking for :
+        button.btn.btn-primary(type='button', href='/add/a/politician') Add a Polly
