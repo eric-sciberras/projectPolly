@@ -8,60 +8,81 @@ block content
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='name') Name
       .col-md-7
-        input.form-control(type='text', name='name', id='name', placeholder='Name', autofocus, required)
-    //- .form-group.row
-    //-   label.col-md-3.col-form-label.font-weight-bold.text-right(for='levelOfGovernment') Level Of Government
-    //-   .col-md-7
-    //-     select.form-control(type='text', name='levelOfGovernment', id='levelOfGovernment', required)
-    //-       option(value='', selected='', disabled='', hidden='') Choose One
-    //-       option Federal
-    //-       option State
-    //-       option Local
+        if user
+          input.form-control(type='text', name='name', id='name', placeholder='Name', autofocus, required)
+        else
+          input.form-control( disabled='', type='text', name='name', id='name', placeholder='Name', autofocus, required)
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='politicalParty') Policical Party
       .col-md-7
-        select.form-control(type='text', name='politicalParty', id='politicalParty',  onchange='checkSelectField(this.value)' ,required)
-          - var politicalParties = ["Australian Greens","Australian Labor Party","Centre Alliance","Country Liberal Party","Derryn Hinch's Justice Party","Independent","Katter's Australian Party","Liberal Democratic Party","Liberal National Party","Liberal Party of Australia","National Party of Australia","Pauline Hanson's One Nation","United Australia Party"]
-          option(value=' ', selected='', disabled='', hidden='') Choose One
-          each val in politicalParties
-            option=val  
-          option(value ='') Other
-        input.form-control.mt-3(placeholder = 'Enter Political Party Here', style={display:'none'}, type='text', name='politicalParty', id='politicalPartyTextField') 
+        if user
+          select.form-control(type='text', id='politicalParty',  onchange='checkSelectField(this.value,"politicalPartyTextField")',required)
+            - var politicalParties = ['Australian Greens',"Australian Labor Party","Centre Alliance","Country Liberal Party","Derryn Hinch's Justice Party","Independent","Katter's Australian Party","Liberal Democratic Party","Liberal National Party","Liberal Party of Australia","National Party of Australia","Pauline Hanson's One Nation","United Australia Party"]
+            option(value=' ', selected='', disabled='', hidden='') Choose One
+            each val in politicalParties
+              option=val  
+            option(value ='') Other
+          input.form-control.mt-3(placeholder = 'Enter Political Party Here', style={display:'none'}, type='text', name='politicalParty', id='politicalPartyTextField',required) 
+        else
+          select.form-control(disabled =' ' type='text', id='politicalParty',  onchange='checkSelectField(this.value,"politicalPartyTextField")',required)
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='electorate') Electorate
       .col-md-7
-        select.form-control(type='text', name='electorate', id='electorate', placeholder='Electorate',required)
-          - var electorates = ['Bean', 'Canberra', 'Fenner', 'Banks', 'Barton', 'Bennelong', 'Berowra', 'Blaxland', 'Bradfield', 'Calare', 'Chifley', 'Cook', 'Cowper', 'Cunningham', 'Dobell', 'Eden-Monaro', 'Farrer', 'Fowler', 'Gilmore', 'Grayndler', 'Greenway', 'Hughes', 'Hume', 'Hunter', 'Kingsford Smith', 'Lindsay', 'Lyne', 'Macarthur', 'Mackellar', 'Macquarie', 'McMahon', 'Mitchell', 'Newcastle', 'New England', 'North Sydney', 'Page', 'Parkes', 'Parramatta', 'Paterson', 'Reid', 'Richmond', 'Riverina', 'Robertson', 'Shortland', 'Sydney', 'Warringah', 'Watson', 'Wentworth', 'Werriwa', 'Whitlam', 'Lingiari', 'Solomon', 'Blair', 'Bonner', 'Bowman', 'Brisbane', 'Capricornia', 'Dawson', 'Dickson', 'Fadden', 'Fairfax', 'Fisher', 'Flynn', 'Forde', 'Griffith', 'Groom', 'Herbert', 'Hinkler', 'Kennedy', 'Leichhardt', 'Lilley', 'Longman', 'Maranoa', 'McPherson', 'Moncrieff', 'Moreton', 'Oxley', 'Petrie', 'Rankin', 'Ryan', 'Wide Bay', 'Wright', 'Adelaide', 'Barker', 'Boothby', 'Grey', 'Hindmarsh', 'Kingston', 'Makin', 'Mayo', 'Spence', 'Sturt', 'Bass', 'Braddon', 'Clark', 'Franklin', 'Lyons', 'Aston', 'Ballarat', 'Bendigo', 'Bruce', 'Calwell', 'Casey', 'Chisholm', 'Cooper', 'Corangamite', 'Corio', 'Deakin', 'Dunkley', 'Flinders', 'Fraser', 'Gellibrand', 'Gippsland', 'Goldstein', 'Gorton', 'Higgins', 'Holt', 'Hotham', 'Indi', 'Isaacs', 'Jagajaga', 'Kooyong', 'Lalor', 'La Trobe', 'Macnamara', 'Mallee', 'Maribyrnong', 'McEwen', 'Melbourne', 'Menzies', 'Monash', 'Nicholls', 'Scullin', 'Wannon', 'Wills', 'Brand', 'Burt', 'Canning', 'Cowan', 'Curtin', 'Durack', 'Forrest', 'Fremantle', 'Hasluck', 'Moore', "O'Connor", 'Pearce', 'Perth', 'Stirling', 'Swan', 'Tangney']
-          option(value='', selected='', disabled='', hidden='') Choose One
-          each val in electorates
-            option=val
+        if user
+          select.form-control(type='text', id='electorate', placeholder='Electorate',onchange='checkSelectField(this.value,"electorateTextField")',required)
+            - var electorates = ['Bean', 'Canberra', 'Fenner', 'Banks', 'Barton', 'Bennelong', 'Berowra', 'Blaxland', 'Bradfield', 'Calare', 'Chifley', 'Cook', 'Cowper', 'Cunningham', 'Dobell', 'Eden-Monaro', 'Farrer', 'Fowler', 'Gilmore', 'Grayndler', 'Greenway', 'Hughes', 'Hume', 'Hunter', 'Kingsford Smith', 'Lindsay', 'Lyne', 'Macarthur', 'Mackellar', 'Macquarie', 'McMahon', 'Mitchell', 'Newcastle', 'New England', 'North Sydney', 'Page', 'Parkes', 'Parramatta', 'Paterson', 'Reid', 'Richmond', 'Riverina', 'Robertson', 'Shortland', 'Sydney', 'Warringah', 'Watson', 'Wentworth', 'Werriwa', 'Whitlam', 'Lingiari', 'Solomon', 'Blair', 'Bonner', 'Bowman', 'Brisbane', 'Capricornia', 'Dawson', 'Dickson', 'Fadden', 'Fairfax', 'Fisher', 'Flynn', 'Forde', 'Griffith', 'Groom', 'Herbert', 'Hinkler', 'Kennedy', 'Leichhardt', 'Lilley', 'Longman', 'Maranoa', 'McPherson', 'Moncrieff', 'Moreton', 'Oxley', 'Petrie', 'Rankin', 'Ryan', 'Wide Bay', 'Wright', 'Adelaide', 'Barker', 'Boothby', 'Grey', 'Hindmarsh', 'Kingston', 'Makin', 'Mayo', 'Spence', 'Sturt', 'Bass', 'Braddon', 'Clark', 'Franklin', 'Lyons', 'Aston', 'Ballarat', 'Bendigo', 'Bruce', 'Calwell', 'Casey', 'Chisholm', 'Cooper', 'Corangamite', 'Corio', 'Deakin', 'Dunkley', 'Flinders', 'Fraser', 'Gellibrand', 'Gippsland', 'Goldstein', 'Gorton', 'Higgins', 'Holt', 'Hotham', 'Indi', 'Isaacs', 'Jagajaga', 'Kooyong', 'Lalor', 'La Trobe', 'Macnamara', 'Mallee', 'Maribyrnong', 'McEwen', 'Melbourne', 'Menzies', 'Monash', 'Nicholls', 'Scullin', 'Wannon', 'Wills', 'Brand', 'Burt', 'Canning', 'Cowan', 'Curtin', 'Durack', 'Forrest', 'Fremantle', 'Hasluck', 'Moore', "O'Connor", 'Pearce', 'Perth', 'Stirling', 'Swan', 'Tangney']
+            option(value='', selected='', disabled='', hidden='') Choose One
+            each val in electorates
+              option=val
+            option(value='') Other
+          input.form-control.mt-3(placeholder = 'Enter Electorate Here', style={display:'none'}, type='text', name='electorate', id='electorateTextField',required) 
+        else
+          select.form-control(disabled='',type='text', id='electorate', placeholder='Electorate',onchange='checkSelectField(this.value,"electorateTextField")',required)
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='title') Current title
       .col-md-7
-        input.form-control(type='text', name='title', id='title', placeholder='Title', required) 
+        if user
+          input.form-control(type='text', name='title', id='title', placeholder='Title', required) 
+        else
+          input.form-control(disabled='', type='text', name='title', id='title', placeholder='Title', required) 
         small.form-text.text-muted
-          | Current political title e.g. Minister/shadow minister for..., Lord Mayor, Candidate.
+            | Current political title e.g. Minister/shadow minister for..., Lord Mayor, Candidate.
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='twitterHandle') Twitter Handle (optional)
       .col-md-7
-        input.form-control(type='text', name='twitterHandle', id='twitterHandle', placeholder='Twitter Handle') 
+        if user
+          input.form-control(type='text', name='twitterHandle', id='twitterHandle', placeholder='Twitter Handle') 
+        else
+          input.form-control(disabled='',type='text', name='twitterHandle', id='twitterHandle', placeholder='Twitter Handle') 
         small.form-text.text-muted
-          | The twitter handle is used to grab the politicians profile picture
+            | The twitter handle is used to grab the politician's profile picture
+    .form-group.row
+      .offset-md-3.col-md-7.pl-2
+        if user
+          button.col-md-3.btn.btn-primary(type='submit')
+            i.far.fa-user.fa-sm
+            | Submit
+        else
+          button.col-md-6.btn.btn-primary(type='submit',disabled='')
+            i.far.fa-user.fa-sm
+            | Login to Add Politician
 
-    .form-group
-      .offset-sm-3.col-md-7.pl-2
-        button.col-md-3.btn.btn-primary(type='submit')
-          i.far.fa-user.fa-sm
-          | Submit
-    .form-group
-      .offset-sm-3.col-md-7.pl-2
+      .offset-md-3.col-md-7.pl-2
         hr
 
   script.
-    function checkSelectField(val){
-      var element=document.getElementById('politicalPartyTextField');
+    function checkSelectField(val,id){
+      var element=document.getElementById(id);
       if(val=='')
         element.style.display='block';
       else
         element.style.display='none';
     } 
+    $( document ).ready(function() {
+      $('select[id=politicalParty]').change(function () {
+      $('input[id=politicalPartyTextField]').val($(this).val());
+      });
+       $('select[id=electorate]').change(function () {
+      $('input[id=electorateTextField]').val($(this).val());
+      });
+    })
