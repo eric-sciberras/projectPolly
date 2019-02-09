@@ -17,9 +17,9 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const expressValidator = require("express-validator");
 const expressStatusMonitor = require("express-status-monitor");
-const multer = require("multer");
+// const multer = require("multer");
 
-const upload = multer({ dest: path.join(__dirname, "uploads") });
+// const upload = multer({ dest: path.join(__dirname, "uploads") });
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -92,11 +92,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use((req, res, next) => {
-  if (req.path === "/api/upload") {
-    next();
-  } else {
-    lusca.csrf()(req, res, next);
-  }
+  // if (req.path === "/api/upload") {
+  //   next();
+  // } else {
+  lusca.csrf()(req, res, next);
+  //}
 });
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
@@ -114,12 +114,14 @@ app.use((req, res, next) => {
     !req.path.match(/^\/auth/) &&
     !req.path.match(/\./)
   ) {
-    req.session.returnTo = req.originalUrl;
+    req.session.returnTo = req.headers.referer;
   } else if (
     req.user &&
-    (req.path === "/account" || req.path.match(/^\/api/))
+    (req.path === "/account" ||
+      req.path.match(/^\/api/) ||
+      req.path.match(/^\/politician/))
   ) {
-    req.session.returnTo = req.originalUrl;
+    req.session.returnTo = req.headers.referer;
   }
   next();
 });
@@ -191,8 +193,12 @@ app.get(
 );
 app.get("/addPolitician", politicianController.getAddPoliticianPage);
 app.post("/addPolitician", politicianController.postPolitician);
-app.get("/search/", politicianController.getListOfPoliticians);
+app.get("/searchPoliticians/", politicianController.getListOfPoliticians);
+app.get("/searchParties/", politicianController.getListOfParties);
+app.get("/searchElectorates/", politicianController.getListOfElectorates);
 app.get("/politician/:shortId", politicianController.getPoliticianPage);
+app.get("/political-party/:party", politicianController.searchByParty);
+app.get("/electorate/:electorate", politicianController.searchByElectorate);
 app.post("/editPolitician/:shortId", politicianController.editPolitician);
 
 app.post(
