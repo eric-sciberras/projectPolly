@@ -3,21 +3,49 @@ $(document).ready(() => {});
 
 $(".alert").fadeOut(3000);
 
+/*Search Bar*/
 $.typeahead({
   input: ".js-typeahead-politicians",
-  order: "desc",
-  display: ["name"],
-  href: "/politician/{{_id}}",
-  mustSelectItem: true,
-  //generateOnLoad: true,
   minLength: 0,
-  searchOnFocus: true,
+  maxItem: 15,
+  order: "asc",
   hint: true,
+  searchOnFocus: true,
+  mustSelectItem: true,
+  group: {
+    template: "{{group}}"
+  },
+  cache: true,
+  maxItemPerGroup: 5,
+  href: function(item) {
+    if (item.group == "Politician") {
+      return "/politician/" + item._id;
+    } else {
+      return (
+        item.group.replace(" ", "-") + "/" + item.display.replace(" ", "-")
+      );
+    }
+  },
+  dropdownFilter: "All",
   emptyTemplate:
     "no result for {{query}}  <a class='btn btn-primary float-right' href='/addPolitician' role='button'>Add A Polly</a>",
   source: {
-    remote: {
-      url: "/search/"
+    Politician: {
+      url: "/searchPoliticians/"
+    },
+    "Political Party": {
+      ajax: {
+        type: "GET",
+        url: "/searchParties/",
+        path: ""
+      }
+    },
+    Electorate: {
+      ajax: {
+        type: "GET",
+        url: "/searchElectorates/",
+        path: ""
+      }
     }
   }
 });
