@@ -2,9 +2,18 @@ const Politician = require("../models/Politician");
 const PromiseMade = require("../models/Promise");
 const Characteristics = require("../models/Characteristics");
 const View = require("../models/View");
+const Twitter = require("twitter");
+
+let client = new Twitter({
+  consumer_key: process.env.TWITTER_KEY,
+  consumer_secret: process.env.TWITTER_SECRET,
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+});
 
 /** Post a politician to the Database */
 exports.postPolitician = (req, res, next) => {
+  console.log("here");
   const politician = new Politician({
     name: req.body.name,
     originalAuthor: req.user._id,
@@ -61,11 +70,76 @@ exports.getAddPoliticianPage = (req, res) => {
   });
 };
 
-/** Return A list of Politicians For search query */
-exports.getListOfPoliticians = (req, res, next) => {
-  Politician.find({}, "name _id", function postResponse(err, politicians) {
+exports.searchByParty = (req, res, next) => {
+  let party = req.params.party.replace("-", " ");
+  Politician.find({ politicalParty: party }, (err, politicians) => {
     if (err) res.send(err);
-    res.json(politicians);
+    // for (let i = 0; i < politicians.length; i++) {
+    //   picts[i] = client
+    //     .get("users/show", { screen_name: politician.twitterName })
+    //     .then(results => {
+    //       return results.profile_image_url_https.replace("_normal", "_bigger");
+    //     })
+    //     .catch(err => {
+    //       console.log(err);
+    //       return null;
+    //     });
+    // }
+    res.render("search", {
+      politicians
+    });
+  });
+};
+
+// let getPoliticiansProfilePic =>(twitterName) client
+//   .get("users/show", { screen_name: twitterName })
+//   .then(results => {
+//     return results.profile_image_url_https.replace("_normal", "_bigger");
+//   })
+//   .catch(err => {
+//     console.log(err);
+//     return null;
+//   });
+
+exports.searchByElectorate = (req, res, next) => {};
+
+exports.getListOfPoliticians = (req, res, next) => {
+  Politician.aggregate(
+    [
+      {
+        $group: {
+          _id: "$_id",
+          display: { $first: "$name" }
+        }
+      }
+    ],
+    function postResponse(err, names) {
+      if (err) res.send(err);
+      console.log(names);
+      res.json(names);
+    }
+  );
+};
+
+/** Return A list of distinct parties For search query */
+exports.getListOfParties = (req, res, next) => {
+  Politician.collection.distinct("politicalParty", function postResponse(
+    err,
+    parties
+  ) {
+    if (err) res.send(err);
+    console.log(parties);
+    res.json(parties);
+  });
+};
+
+exports.getListOfElectorates = (req, res, next) => {
+  Politician.collection.distinct("electorate", function postResponse(
+    err,
+    electorates
+  ) {
+    if (err) res.send(err);
+    res.json(electorates);
   });
 };
 
@@ -79,6 +153,19 @@ exports.getPoliticianPage = (req, res) => {
     politician: req.params.shortId,
     user: userId
   }).exec();
+
+  let getPoliticiansProfilePic = getPolitician
+    .then(politician => {
+      console.log(politician);
+      return client.get("users/show", { screen_name: politician.twitterName });
+    })
+    .then(results => {
+      return results.profile_image_url_https.replace("_normal", "_bigger");
+    })
+    .catch(err => {
+      console.log(err);
+      return null;
+    });
 
   // Gets the averages and count from all users votes about the polictian's characteristics
   let getCharacteristicsStats = Characteristics.aggregate([
@@ -98,7 +185,6 @@ exports.getPoliticianPage = (req, res) => {
 
   let getPromisesMade = PromiseMade.aggregate([
     { $match: { politician: req.params.shortId } },
-    // projct to make a rep array here
     { $unwind: { path: "$reputationVote", preserveNullAndEmptyArrays: true } },
     {
       $lookup: {
@@ -177,18 +263,21 @@ exports.getPoliticianPage = (req, res) => {
     getUsersCharacteristics,
     getCharacteristicsStats,
     getPromisesMade,
-    getViews
+    getViews,
+    getPoliticiansProfilePic
   ];
 
   Promise.all(promises)
     .then(results => {
+      console.log(results[5]);
       res.render("politician", {
         title: results[0].name,
         politician: results[0],
         usersRating: results[1],
         averageRatings: results[2][0],
         promises: results[3],
-        views: results[4]
+        views: results[4],
+        profilePicture: results[5]
       });
     })
     .catch(err => res.send(err));
