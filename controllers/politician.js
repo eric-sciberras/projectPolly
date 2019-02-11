@@ -71,37 +71,65 @@ exports.getAddPoliticianPage = (req, res) => {
 };
 
 exports.searchByParty = (req, res, next) => {
-  let party = req.params.party.replace("-", " ");
-  Politician.find({ politicalParty: party }, (err, politicians) => {
+  let twitterNames = [];
+
+  Politician.find({ politicalParty: req.params.party }, (err, politicians) => {
     if (err) res.send(err);
-    // for (let i = 0; i < politicians.length; i++) {
-    //   picts[i] = client
-    //     .get("users/show", { screen_name: politician.twitterName })
-    //     .then(results => {
-    //       return results.profile_image_url_https.replace("_normal", "_bigger");
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //       return null;
-    //     });
-    // }
-    res.render("search", {
-      politicians
+    for (let i = 0; i < politicians.length; i++) {
+      twitterNames.push(politicians[i].twitterName);
+    }
+    getPictures(twitterNames).then(pictures => {
+      console.log(pictures);
+      res.render("search", {
+        title: req.params.party,
+        politicians,
+        pictures
+      });
     });
   });
 };
 
-// let getPoliticiansProfilePic =>(twitterName) client
-//   .get("users/show", { screen_name: twitterName })
-//   .then(results => {
-//     return results.profile_image_url_https.replace("_normal", "_bigger");
-//   })
-//   .catch(err => {
-//     console.log(err);
-//     return null;
-//   });
+async function getPictures(twitterNames) {
+  return Promise.all(
+    twitterNames.map(function(twitterName) {
+      let result = getPoliticiansProfilePic(twitterName);
+      return result;
+    })
+  );
+}
 
-exports.searchByElectorate = (req, res, next) => {};
+let getPoliticiansProfilePic = twitterName => {
+  return new Promise((resolve, reject) => {
+    client
+      .get("users/show", { screen_name: twitterName })
+      .then(results => {
+        resolve(results.profile_image_url_https.replace("_normal", ""));
+      })
+      .catch(err => {
+        console.log(err);
+        resolve(null);
+      });
+  });
+};
+
+exports.searchByElectorate = (req, res, next) => {
+  let twitterNames = [];
+
+  Politician.find({ electorate: req.params.electorate }, (err, politicians) => {
+    if (err) res.send(err);
+    for (let i = 0; i < politicians.length; i++) {
+      twitterNames.push(politicians[i].twitterName);
+    }
+    getPictures(twitterNames).then(pictures => {
+      console.log(pictures);
+      res.render("search", {
+        title: req.params.electorate,
+        politicians,
+        pictures
+      });
+    });
+  });
+};
 
 exports.getListOfPoliticians = (req, res, next) => {
   Politician.aggregate(
@@ -133,6 +161,7 @@ exports.getListOfParties = (req, res, next) => {
   });
 };
 
+/** Return A list of distinct electorates For search query */
 exports.getListOfElectorates = (req, res, next) => {
   Politician.collection.distinct("electorate", function postResponse(
     err,
@@ -160,7 +189,7 @@ exports.getPoliticianPage = (req, res) => {
       return client.get("users/show", { screen_name: politician.twitterName });
     })
     .then(results => {
-      return results.profile_image_url_https.replace("_normal", "_bigger");
+      return results.profile_image_url_https.replace("_normal", "");
     })
     .catch(err => {
       console.log(err);
