@@ -1,7 +1,7 @@
 /* eslint-env jquery, browser */
 $(document).ready(() => {});
 
-$(".alert").fadeOut(3000);
+$(".alert").fadeOut(7000);
 
 /*Search Bar*/
 $.typeahead({
@@ -15,15 +15,13 @@ $.typeahead({
   group: {
     template: "{{group}}"
   },
-  cache: true,
+  //cache: true,
   maxItemPerGroup: 5,
   href: function(item) {
     if (item.group == "Politician") {
       return "/politician/" + item._id;
     } else {
-      return (
-        item.group.replace(" ", "-") + "/" + item.display.replace(" ", "-")
-      );
+      return item.group.replace(" ", "-") + "/" + item.display;
     }
   },
   dropdownFilter: "All",
