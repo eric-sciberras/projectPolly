@@ -8,9 +8,9 @@ block content
           .row
             .col-lg-3.align-self-center
               if profilePicture
-                img.img-fluid(src=profilePicture,alt='profile image')
+                img.img-fluid(src=profilePicture,alt='profile image',width=115,height=115)
               else
-                img.img-fluid(src="/blank-profile-picture.png",alt='profile image')
+                img.img-fluid(src="/blank-profile-picture.png",alt='profile image',width=115,height=115)
             .col-lg-9
               h1.py-2 #{politician.name}
               ul#myTab.nav.nav-tabs(role='tablist').align-items-end
@@ -73,7 +73,7 @@ block content
                                         else
                                           option=val  
                                       option(value ='') Other
-                                    input.form-control.mt-3(placeholder = 'Enter Political Party Here', style={display:'none'}, type='text', name='politicalParty', id='politicalPartyTextField',required) 
+                                    input.form-control.mt-3(placeholder = 'Enter Political Party Here', style={display:'none'}, type='text', name='politicalParty', id='politicalPartyTextField',required, value=politician.politicalParty ) 
                               .form-group.row
                                   label.col-md-3.col-form-label.font-weight-bold(for='electorate') Electorate
                                   .col-md-7
@@ -84,8 +84,8 @@ block content
                                           option(selected="selected")=val
                                         else
                                           option=val  
-                                        option(value ='') Other
-                                    input.form-control.mt-3(placeholder = 'Enter Electorate Here', style={display:'none'}, type='text', name='electorate', id='electorateTextField',required) 
+                                      option(value ='') Other
+                                    input.form-control.mt-3(placeholder = 'Enter Electorate Here', style={display:'none'}, type='text', name='electorate', id='electorateTextField', value=politician.electorate, required) 
                               
                               .form-group.row
                                 label.col-md-3.col-form-label.font-weight-bold(for='twitterHandle') Twitter Handle (optional)
@@ -360,8 +360,6 @@ block content
         document.getElementById("knowledgeableOutput").value = rangeToValue(#{usersRating.knowledgeable});
         document.getElementById("respectfulOutput").value = rangeToValue(#{usersRating.respectful}); 
     script.
-      //- check if this code is safe 
-      // console.log(!{JSON.stringify(promises)})
       radarChartConstructor(!{JSON.stringify(averageRatings)});
       $( document ).ready(function() {
         var url = window.location.href;
@@ -372,6 +370,9 @@ block content
         $('select[id=politicalParty]').change(function () {
         $('input[id=politicalPartyTextField]').val($(this).val());
         });
+        $('select[id=electorate]').change(function () {
+        $('input[id=electorateTextField]').val($(this).val());
+        });
       })
         
       function checkSelectField(val,id){
@@ -380,4 +381,4 @@ block content
           element.style.display='block';
         else
           element.style.display='none';
-      } 
+      }
