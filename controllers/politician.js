@@ -3,6 +3,8 @@ const PromiseMade = require("../models/Promise");
 const Characteristics = require("../models/Characteristics");
 const View = require("../models/View");
 const Twitter = require("twitter");
+const toTitleCase = require("../utils/toTitleCase");
+var slugify = require("slugify");
 
 let client = new Twitter({
   consumer_key: process.env.TWITTER_KEY,
@@ -13,14 +15,13 @@ let client = new Twitter({
 
 /** Post a politician to the Database */
 exports.postPolitician = (req, res, next) => {
-  console.log("here");
   const politician = new Politician({
-    name: req.body.name,
+    name: toTitleCase(req.body.name, " "),
     originalAuthor: req.user._id,
-    politicalParty: req.body.politicalParty,
+    politicalParty: toTitleCase(slugify(req.body.politicalParty, " ")),
     twitterName: req.body.twitterHandle,
-    electorate: req.body.electorate,
-    title: req.body.title
+    electorate: toTitleCase(slugify(req.body.electorate, " ")),
+    title: toTitleCase(req.body.title)
   });
   Politician.findOne({ name: req.body.name }, (err, existingPolitician) => {
     if (err) {
@@ -44,10 +45,10 @@ exports.postPolitician = (req, res, next) => {
 
 exports.editPolitician = (req, res, next) => {
   const updatedPolitician = {
-    politicalParty: req.body.politicalParty,
+    politicalParty: toTitleCase(slugify(req.body.politicalParty, " ")),
     twitterName: req.body.twitterHandle,
-    electorate: req.body.electorate,
-    title: req.body.title
+    electorate: toTitleCase(req.body.electorate),
+    title: toTitleCase(req.body.title)
   };
   Politician.findOneAndUpdate(
     { _id: req.params.shortId },
@@ -70,23 +71,27 @@ exports.getAddPoliticianPage = (req, res) => {
   });
 };
 
-exports.searchByParty = (req, res, next) => {
+exports.searchByParty = (req, res) => {
   let twitterNames = [];
-
-  Politician.find({ politicalParty: req.params.party }, (err, politicians) => {
-    if (err) res.send(err);
-    for (let i = 0; i < politicians.length; i++) {
-      twitterNames.push(politicians[i].twitterName);
-    }
-    getPictures(twitterNames).then(pictures => {
-      console.log(pictures);
-      res.render("search", {
-        title: req.params.party,
-        politicians,
-        pictures
+  // ensures the param is in the correct format before quering the db
+  let politicalPartyToFind = toTitleCase(req.params.party.replace(/(-)/g, " "));
+  console.log(politicalPartyToFind);
+  Politician.find(
+    { politicalParty: politicalPartyToFind },
+    (err, politicians) => {
+      if (err) res.send(err);
+      for (let i = 0; i < politicians.length; i++) {
+        twitterNames.push(politicians[i].twitterName);
+      }
+      getPictures(twitterNames).then(pictures => {
+        res.render("search", {
+          title: politicalPartyToFind,
+          politicians,
+          pictures
+        });
       });
-    });
-  });
+    }
+  );
 };
 
 async function getPictures(twitterNames) {
@@ -112,18 +117,18 @@ let getPoliticiansProfilePic = twitterName => {
   });
 };
 
-exports.searchByElectorate = (req, res, next) => {
+exports.searchByElectorate = (req, res) => {
   let twitterNames = [];
+  let electorateToFind = toTitleCase(req.params.party.replace(/(-)/g, " "));
 
-  Politician.find({ electorate: req.params.electorate }, (err, politicians) => {
+  Politician.find({ electorate: electorateToFind }, (err, politicians) => {
     if (err) res.send(err);
     for (let i = 0; i < politicians.length; i++) {
       twitterNames.push(politicians[i].twitterName);
     }
     getPictures(twitterNames).then(pictures => {
-      console.log(pictures);
       res.render("search", {
-        title: req.params.electorate,
+        title: electorateToFind,
         politicians,
         pictures
       });
@@ -174,8 +179,23 @@ exports.getListOfElectorates = (req, res, next) => {
 
 exports.getPoliticianPage = (req, res) => {
   let userId = req.user ? req.user._id : null;
+
   // Gets the politicans info, along with their assigned polictical promises and Views
-  let getPolitician = Politician.findById(req.params.shortId).exec();
+  //let getPolitician = Politician.findById(req.params.shortId).exec();
+
+  let getPolitician = Politician.aggregate([
+    { $match: { _id: req.params.shortId } },
+    {
+      $group: {
+        _id: "$_id",
+        name: { $first: "$name" },
+        title: { $first: "$title" },
+        electorate: { $first: "$electorate" },
+        politicalParty: { $first: "$politicalParty" },
+        twitterName: { $first: "$twitterName" }
+      }
+    }
+  ]).exec();
 
   // Gets the user's vote they made for the polictian's characteristics
   let getUsersCharacteristics = Characteristics.findOne({
@@ -242,13 +262,15 @@ exports.getPoliticianPage = (req, res) => {
     .then(results =>
       PromiseMade.populate(results, {
         path: "promiseVote",
-        match: { user: userId }
+        match: { user: userId },
+        select: "vote"
       })
     )
     .then(results =>
       PromiseMade.populate(results, {
         path: "reputationVote",
-        match: { user: userId }
+        match: { user: userId },
+        select: "vote"
       })
     )
     .catch(err => console.log(err));
@@ -282,7 +304,8 @@ exports.getPoliticianPage = (req, res) => {
     .then(results =>
       View.populate(results, {
         path: "reputationVote",
-        match: { user: userId }
+        match: { user: userId },
+        select: "vote"
       })
     )
     .catch(err => console.log(err));
@@ -298,10 +321,10 @@ exports.getPoliticianPage = (req, res) => {
 
   Promise.all(promises)
     .then(results => {
-      console.log(results[5]);
+      //console.log(results[0]);
       res.render("politician", {
-        title: results[0].name,
-        politician: results[0],
+        title: results[0][0].name,
+        politician: results[0][0],
         usersRating: results[1],
         averageRatings: results[2][0],
         promises: results[3],
