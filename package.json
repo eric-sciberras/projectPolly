@@ -1,12 +1,12 @@
 {
-  "name": "hackathon-starter",
-  "version": "5.1.2",
-  "description": "A boilerplate for Node.js web applications",
+  "name": "Project-Polly",
+  "version": "1.0.0",
+  "description": "A Community driven review site of Australian Politicians",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sahat/hackathon-starter.git"
+    "url": "https://github.com/eric-sciberras/projectPolly"
   },
-  "author": "Sahat Yalkabov",
+  "author": "Eric Sciberras",
   "license": "MIT",
   "scripts": {
     "postinstall": "",
@@ -56,6 +56,7 @@
     "pug": "^2.0.3",
     "request": "^2.88.0",
     "shortid": "^2.2.14",
+    "slugify": "^1.3.4",
     "twitter": "^1.7.1",
     "validator": "^10.10.0"
   },
