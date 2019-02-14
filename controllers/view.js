@@ -21,37 +21,68 @@ exports.postView = (req, res, next) => {
 };
 
 exports.editView = (req, res) => {
-  let updateView = View.findByIdAndUpdate(req.params.id, {
-    title: req.body.viewTitle,
-    description: req.body.viewDescription,
-    source: req.body.viewSource
-  }).exec();
+  View.findById(req.params.id, (err, view) => {
+    if (err) {
+      return next(err);
+    }
 
-  updateView
-    .then(() => {
-      req.flash("success", {
-        msg: "View Updated"
+    if (view) {
+      view.title = req.body.viewTitle || "";
+      view.description = req.body.viewDescription || "";
+      view.source = req.body.viewSource || "";
+      if (view.author == req.user.id) {
+        view.save(err => {
+          req.flash("success", {
+            msg: "Promise Updated"
+          });
+          res.redirect("/politician/" + req.params.shortId + "#views");
+        });
+      } else {
+        req.flash("errors", {
+          msg: "You are not authorised to edit this view"
+        });
+        res.redirect("/politician/" + req.params.shortId + "#views");
+      }
+    } else {
+      req.flash("errors", {
+        msg: "View Not Found"
       });
       res.redirect("/politician/" + req.params.shortId + "#views");
-    })
-    .catch(err => res.send(err));
+    }
+  });
 };
 
 exports.deleteView = (req, res) => {
-  let deleteView = View.findByIdAndDelete(req.params.id).exec();
-  let deleteReputationVotes = ViewReputationVote.deleteMany({
-    view: req.params.id
-  }).exec();
-
-  deleteView
-    .then(deleteReputationVotes)
-    .then(() => {
-      req.flash("success", {
-        msg: "View Deleted"
+  View.findById(req.params.id, (err, view) => {
+    if (view) {
+      if (view.author == req.user.id) {
+        view
+          .findByIdAndDelete(req.params.id)
+          .then(
+            ViewReputationVote.deleteMany({
+              view: req.params.id
+            }).exec()
+          )
+          .then(() => {
+            req.flash("success", {
+              msg: "View Deleted"
+            });
+            res.redirect("/politician/" + req.params.shortId + "#views");
+          })
+          .catch(err => res.send(err));
+      } else {
+        req.flash("errors", {
+          msg: "You are not authorised to delete this View"
+        });
+        res.redirect("/politician/" + req.params.shortId + "#views");
+      }
+    } else {
+      req.flash("errors", {
+        msg: "View Not Found"
       });
       res.redirect("/politician/" + req.params.shortId + "#views");
-    })
-    .catch(err => res.send(err));
+    }
+  });
 };
 
 exports.postReputationVote = (req, res) => {
