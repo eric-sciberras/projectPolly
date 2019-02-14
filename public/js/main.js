@@ -21,7 +21,12 @@ $.typeahead({
     if (item.group == "Politician") {
       return "/politician/" + item._id;
     } else {
-      return "/" + item.group.replace(" ", "-") + "/" + item.display;
+      return (
+        "/" +
+        item.group.replace(" ", "-") +
+        "/" +
+        item.display.replace(/\s/g, "-")
+      );
     }
   },
   dropdownFilter: "All",
