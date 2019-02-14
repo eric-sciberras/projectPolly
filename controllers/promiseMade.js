@@ -43,7 +43,7 @@ exports.postPromiseVote = (req, res, next) => {
         }
       ).exec();
     })
-    .then(promiseVote => {
+    .then(() => {
       req.flash("success", {
         msg: "Vote Submitted"
       });
@@ -87,39 +87,68 @@ exports.getPromiseData = (req, res, next) => {
 };
 
 exports.editPromise = (req, res) => {
-  let updatePromise = PromiseMade.findByIdAndUpdate(req.params.id, {
-    title: req.body.promiseTitle,
-    description: req.body.promiseDescription,
-    source: req.body.promiseSource
-  }).exec();
+  PromiseMade.findById(req.params.id, (err, promiseMade) => {
+    if (err) {
+      return next(err);
+    }
 
-  updatePromise
-    .then(() => {
-      req.flash("success", {
-        msg: "Promise Updated"
+    if (promiseMade) {
+      (promiseMade.title = req.body.promiseTitle),
+        (promiseMade.description = req.body.promiseDescription);
+      promiseMade.source = req.body.promiseSource;
+      if (promiseMade.author == req.user.id) {
+        promiseMade.save(err => {
+          req.flash("success", {
+            msg: "Promise Updated"
+          });
+          res.redirect("/politician/" + req.params.shortId + "#promises");
+        });
+      } else {
+        req.flash("errors", {
+          msg: "You are not authorised to edit this promise"
+        });
+        res.redirect("/politician/" + req.params.shortId + "#promises");
+      }
+    } else {
+      req.flash("errors", {
+        msg: "Promise Not Found"
       });
       res.redirect("/politician/" + req.params.shortId + "#promises");
-    })
-    .catch(err => res.send(err));
+    }
+  });
 };
 
 exports.deletePromise = (req, res) => {
-  let deletePromise = PromiseMade.findByIdAndDelete(req.params.id).exec();
-  let deleteVotes = PromiseVote.deleteMany({ promise: req.params.id }).exec();
-  let deleteReputationVotes = PromiseReputationVote.deleteMany({
-    promise: req.params.id
-  }).exec();
-
-  deletePromise
-    .then(deleteVotes)
-    .then(deleteReputationVotes)
-    .then(() => {
-      req.flash("success", {
-        msg: "Promise Deleted"
+  PromiseMade.findById(req.params.id, (err, promiseMade) => {
+    if (promiseMade) {
+      if (promiseMade.author == req.user.id) {
+        PromiseMade.findByIdAndDelete(req.params.id)
+          .then(PromiseVote.deleteMany({ promise: req.params.id }).exec())
+          .then(
+            PromiseReputationVote.deleteMany({
+              promise: req.params.id
+            })
+          )
+          .then(() => {
+            req.flash("success", {
+              msg: "Promise Deleted"
+            });
+            res.redirect("/politician/" + req.params.shortId + "#promises");
+          })
+          .catch(err => res.send(err));
+      } else {
+        req.flash("errors", {
+          msg: "You are not authorised to delete this promise"
+        });
+        res.redirect("/politician/" + req.params.shortId + "#promises");
+      }
+    } else {
+      req.flash("errors", {
+        msg: "Promise Not Found"
       });
       res.redirect("/politician/" + req.params.shortId + "#promises");
-    })
-    .catch(err => res.send(err));
+    }
+  });
 };
 
 exports.postReputationVote = (req, res) => {
