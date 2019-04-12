@@ -1,8 +1,15 @@
 extends layout
 
 block content
-  hr
-  h1 Rate A Polly
-  p.lead A Community driven review site of Australian Politicians (what could possibly go wrong)
-  hr
+  .py-3
+    h1 Rate A Polly
+    p.lead A Community driven review site of Australian Politicians (what could possibly go wrong)
+    .btn-toolbar(role='toolbar', aria-label='Toolbar with button groups')
+  .btn-group.mr-2(role='group', aria-label='First group')
+    a.btn.btn-primary.float-left(href='/addPolitician', role='button') Add A Polly
+  .btn-group.mr-2(role='group', aria-label='Second group')
+    a.btn.btn-secondary.float-left(href='/politician/eD-1wKhPm', role='button') View Demo
+    
+            
+            
 
