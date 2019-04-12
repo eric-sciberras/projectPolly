@@ -17,6 +17,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const expressValidator = require("express-validator");
 const expressStatusMonitor = require("express-status-monitor");
+const yes = require("yes-https");
 // const multer = require("multer");
 
 // const upload = multer({ dest: path.join(__dirname, "uploads") });
@@ -66,10 +67,15 @@ mongoose.connection.on("error", err => {
 /**
  * Express configuration.
  */
+
 app.set("host", process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0");
 app.set("port", process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8000);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
+// only use https for production system
+if (process.env.NODE_ENV === "production") {
+  app.use(yes()); // for https
+}
 app.use(expressStatusMonitor());
 app.use(compression());
 app.use(logger("dev"));
