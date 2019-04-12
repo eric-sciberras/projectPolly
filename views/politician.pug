@@ -107,6 +107,8 @@ block content
                       default
                         p From #{averageRatings.count}  ratings 
                 .col-lg-4
+                  button.btn.btn-primary.fas.fa-info(type='button', data-container='body', data-trigger="focus", data-toggle='popover', data-placement='top', data-content='Move the sliders and press submit to vote. The average vote of each characteristic is shown on the chart')
+
                   form(action="/characteristics/" + politician._id, method="POST")
                     input(type='hidden', name='_csrf', value=_csrf)
                     .form-group.text-left
@@ -141,7 +143,9 @@ block content
                             | #{promises[index].title}
                         .col-lg-auto
                           output.badge.badge-pill.badge-primary.mr-2(style={ 'font-size': '16px'},name='knowledgeableOutput') #{promises[index].reputation}
+                          
                           if user && (user.id == promises[index].author)
+                            
                             button.btn.btn-primary(type='button', data-toggle='modal', data-target='#editPromise'+index) Edit
                             .modal.fade(id ='editPromise'+index tabindex='-1', role='dialog', aria-labelledby='editPromise'+index, aria-hidden='true')
                               .modal-dialog.modal-dialog-centered(role='document')
@@ -180,31 +184,31 @@ block content
                                             button.btn.btn-danger(type='submit') Delete
                           else
                             if !user
-                              .btn-group(role='group', aria-label='Basic example')
+                               .btn-group(role='group', aria-label='Basic example')
                                 form()
                                   button.btn.mr-2.btn-outline-success(disabled='') +
                                 form()
                                   button.btn.btn-outline-danger(disabled='') −
                             else
-                                .btn-group(role='group', aria-label='Basic example')
+                               .btn-group(role='group', aria-label='Basic example')
                                   form(action='/promise/' +  politician._id  + '/repVote/' + promises[index]._id, method='post')
                                       input(type='hidden', name='_csrf', value=_csrf)
                                       button.btn.mr-2(class =  (promises[index].reputationVote && promises[index].reputationVote.length)  && promises[index].reputationVote[0].vote == '1' ? "btn-success" : "btn-outline-success",name='vote', value =  (promises[index].reputationVote && promises[index].reputationVote.length) && promises[index].reputationVote[0].vote == '1' ? ' ' : '1' ) +
                                   form(action='/promise/' +  politician._id  + '/repVote/' + promises[index]._id, method='post') 
                                       input(type='hidden', name='_csrf', value=_csrf)
                                       button.btn(class = (promises[index].reputationVote && promises[index].reputationVote.length) && promises[index].reputationVote[0].vote == '-1' ? "btn-danger" : "btn-outline-danger",name='vote', value = (promises[index].reputationVote && promises[index].reputationVote.length) && promises[index].reputationVote[0].vote == '-1' ? ' ' : '-1' ) −
-                                 
+                            button.btn.btn-primary.fas.fa-info.ml-2(type='button', data-container='body', data-trigger="focus", data-toggle='popover', data-placement='top', data-content='Please vote for this promise based on accuracy, source and impartialness (not based on opinions). The total vote will appear on the left and higher rated promises will float to the top.')       
                                 
                     .collapse.show(id='collapse'+index, aria-labelledby='heading'+index, data-parent='#accordion')
                       .card-body
-                        .row
+                        .row.justify-content-center
                           .col-lg-8.col-md-7.col-sm-12.col-12.align-self-center.text-left
 
                             p #{promises[index].description}
                             h4 Source
                             p #{promises[index].source}
-                          .col-lg-4.col-md-5.col-sm-8.col-8
-                            canvas(id='promiseChart'+ index)
+                          .text-center.col-lg-4.col-md-5.col-sm-8.col-8
+                            canvas.text-center(id='promiseChart'+ index)
                           .col-lg-12.text-center
                             if !user
                               p Login to have your say on this promise: 
@@ -226,11 +230,13 @@ block content
                                   input(type='hidden', name='_csrf', value=_csrf)
                                   button.btn(class =    promises[index].promiseVote[0] && promises[index].promiseVote[0].vote == '-1' ? "btn-danger" : "btn-outline-danger",type='submit',name='vote', value= promises[index].promiseVote[0] && promises[index].promiseVote[0].vote == '-1' ? ' ' : '-1')  Broken
               .py-3.text-right
+                .btn-group(role='group', aria-label='Basic example')
                 if !user
-                      button.btn.btn-primary(type='submit',disabled='') Login to Add Promise
+                  button.btn.btn-primary.mr-2(type='submit',disabled='') Login to Add Promise
                 else
-                  button.btn.btn-primary(type='button', data-toggle='modal', data-target='#addPromise1') 
+                  button.btn.btn-primary.mr-2(type='button', data-toggle='modal', data-target='#addPromise1') 
                     | Add Promise
+                button.btn.btn-primary.fas.fa-info(type='button', data-container='body', data-trigger="focus", data-toggle='popover', data-placement='top', data-content='Add information about a Promise this politician has made.')
                 #addPromise1.modal.fade(tabindex='-1', role='dialog', aria-labelledby='addPromise1', aria-hidden='true')
                   .modal-dialog.modal-dialog-centered(role='document')
                     .modal-content
@@ -316,6 +322,8 @@ block content
                                 form(action='/view/' +  politician._id  + '/repVote/' + views[index]._id, method='post') 
                                     input(type='hidden', name='_csrf', value=_csrf)
                                     button.btn(class = (views[index].reputationVote && views[index].reputationVote.length) && views[index].reputationVote[0].vote == '-1' ? "btn-danger" : "btn-outline-danger",name='vote', value = (views[index].reputationVote && views[index].reputationVote.length) && views[index].reputationVote[0].vote == '-1' ? ' ' : '-1' ) −                   
+                            button.btn.btn-primary.fas.fa-info.ml-2(type='button', data-container='body', data-trigger="focus", data-toggle='popover', data-placement='top', data-content='Please vote for this view based on accuracy, source and impartialness (not based on opinions). The total vote will appear on the left and higher rated views will float to the top.')       
+                    
                     .collapse.show(id='collapse'+index, aria-labelledby='heading'+index, data-parent='#accordion')
                       .card-body
                         .row.justify-content-center
@@ -324,11 +332,13 @@ block content
                             p Source:  #{views[index].source}
                           .col-lg-12.text-center
               .py-3.text-right
+                .btn-group(role='group', aria-label='Basic example')
                 if !user
-                      button.btn.btn-primary(type='submit',disabled='') Login to Add View
+                  button.btn.btn-primary.mr-2(type='submit',disabled='') Login to Add View
                 else
-                  button.btn.btn-primary(type='button', data-toggle='modal', data-target='#addView1') 
+                  button.btn.btn-primary.mr-2(type='button', data-toggle='modal', data-target='#addView1') 
                     | Add View
+                button.btn.btn-primary.fas.fa-info(type='button', data-container='body', data-trigger="focus", data-toggle='popover', data-placement='top', data-content='Add information about a view this politician has. e.g: immigration, environment, crime, etc.')
                 #addView1.modal.fade(tabindex='-1', role='dialog', aria-labelledby='addView1', aria-hidden='true')
                   .modal-dialog.modal-dialog-centered(role='document')
                     .modal-content
@@ -362,6 +372,9 @@ block content
     script.
       radarChartConstructor(!{JSON.stringify(averageRatings)});
       $( document ).ready(function() {
+        $(function () {
+          $('[data-toggle="popover"]').popover()
+        })
         var url = window.location.href;
         if (url.indexOf("#") > 0){
           var activeTab = url.substring(url.indexOf("#") + 1);
@@ -374,6 +387,7 @@ block content
         $('input[id=electorateTextField]').val($(this).val());
         });
       })
+      
         
       function checkSelectField(val,id){
         var element=document.getElementById(id);
