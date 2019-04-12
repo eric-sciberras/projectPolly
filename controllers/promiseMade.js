@@ -93,9 +93,9 @@ exports.editPromise = (req, res) => {
     }
 
     if (promiseMade) {
-      (promiseMade.title = req.body.promiseTitle),
-        (promiseMade.description = req.body.promiseDescription);
-      promiseMade.source = req.body.promiseSource;
+      promiseMade.title = req.body.promiseTitle || "";
+      promiseMade.description = req.body.promiseDescription || "";
+      promiseMade.source = req.body.promiseSource || "";
       if (promiseMade.author == req.user.id) {
         promiseMade.save(err => {
           req.flash("success", {
