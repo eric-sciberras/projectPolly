@@ -12,7 +12,7 @@ const PoliticianSchema = new mongoose.Schema(
     name: { type: String, unique: true },
     electorate: String,
     title: String,
-    twitterName: String,
+    twitterId: String,
     politicalParty: String,
     originalAuthor: {
       type: Schema.Types.ObjectId,
