@@ -15,54 +15,60 @@ let client = new Twitter({
 
 /** Post a politician to the Database */
 exports.postPolitician = (req, res, next) => {
-  const politician = new Politician({
-    name: toTitleCase(req.body.name, " "),
-    originalAuthor: req.user._id,
-    politicalParty: toTitleCase(slugify(req.body.politicalParty, " ")),
-    twitterName: req.body.twitterHandle,
-    electorate: toTitleCase(slugify(req.body.electorate, " ")),
-    title: toTitleCase(req.body.title)
-  });
-  Politician.findOne({ name: req.body.name }, (err, existingPolitician) => {
-    if (err) {
-      return next(err);
-    }
-    if (existingPolitician) {
-      req.flash("errors", { msg: "Politician Already Exists" });
-      res.redirect("/addPolitician");
-    }
-    politician.save(err => {
-      if (err) {
-        return next(err);
-      }
-      req.flash("success", {
-        msg: "A new politician has successfully been added."
+  screenNameToId(req.body.twitterHandle)
+    .then(userId => {
+      const politician = new Politician({
+        name: toTitleCase(req.body.name, " "),
+        originalAuthor: req.user.id,
+        politicalParty: toTitleCase(slugify(req.body.politicalParty, " ")),
+        twitterId: userId,
+        electorate: toTitleCase(slugify(req.body.electorate, " ")),
+        title: toTitleCase(req.body.title)
       });
-      res.redirect("/");
-    });
-  });
+      Politician.findOne({ name: req.body.name }, (err, existingPolitician) => {
+        if (err) {
+          return next(err);
+        }
+        if (existingPolitician) {
+          req.flash("errors", { msg: "Politician Already Exists" });
+          res.redirect("/addPolitician");
+        }
+        politician.save(err => {
+          if (err) {
+            return next(err);
+          }
+          req.flash("success", {
+            msg: "A new politician has successfully been added."
+          });
+          res.redirect("/");
+        });
+      });
+    })
+    .catch(err => console.log(err));
 };
 
 exports.editPolitician = (req, res, next) => {
-  const updatedPolitician = {
-    politicalParty: toTitleCase(slugify(req.body.politicalParty, " ")),
-    twitterName: req.body.twitterHandle,
-    electorate: toTitleCase(req.body.electorate),
-    title: toTitleCase(req.body.title)
-  };
-  Politician.findOneAndUpdate(
-    { _id: req.params.shortId },
-    updatedPolitician,
-    (err, existingPolitician) => {
-      if (err) {
-        return next(err);
+  screenNameToId(req.body.twitterHandle).then(userId => {
+    const updatedPolitician = {
+      politicalParty: toTitleCase(slugify(req.body.politicalParty, " ")),
+      twitterId: userId,
+      electorate: toTitleCase(req.body.electorate),
+      title: toTitleCase(req.body.title)
+    };
+    Politician.findOneAndUpdate(
+      { _id: req.params.shortId },
+      updatedPolitician,
+      (err, existingPolitician) => {
+        if (err) {
+          return next(err);
+        }
+        req.flash("success", {
+          msg: "successfully Updated"
+        });
+        res.redirect("/politician/" + req.params.shortId);
       }
-      req.flash("success", {
-        msg: "successfully Updated"
-      });
-      res.redirect("/politician/" + req.params.shortId);
-    }
-  );
+    );
+  });
 };
 
 exports.getAddPoliticianPage = (req, res) => {
@@ -72,7 +78,7 @@ exports.getAddPoliticianPage = (req, res) => {
 };
 
 exports.searchByParty = (req, res) => {
-  let twitterNames = [];
+  let twitterIds = [];
   // ensures the param is in the correct format before quering the db
   let politicalPartyToFind = toTitleCase(req.params.party.replace(/(-)/g, " "));
   console.log(politicalPartyToFind);
@@ -81,9 +87,9 @@ exports.searchByParty = (req, res) => {
     (err, politicians) => {
       if (err) res.send(err);
       for (let i = 0; i < politicians.length; i++) {
-        twitterNames.push(politicians[i].twitterName);
+        twitterIds.push(politicians[i].twitterId);
       }
-      getPictures(twitterNames).then(pictures => {
+      getPictures(twitterIds).then(pictures => {
         res.render("search", {
           title: politicalPartyToFind,
           politicians,
@@ -94,19 +100,19 @@ exports.searchByParty = (req, res) => {
   );
 };
 
-async function getPictures(twitterNames) {
+async function getPictures(twitterIds) {
   return Promise.all(
-    twitterNames.map(function(twitterName) {
-      let result = getPoliticiansProfilePic(twitterName);
+    twitterIds.map(function(twitterId) {
+      let result = getPoliticiansProfilePic(twitterId);
       return result;
     })
   );
 }
 
-let getPoliticiansProfilePic = twitterName => {
+let getPoliticiansProfilePic = twitterId => {
   return new Promise((resolve, reject) => {
     client
-      .get("users/show", { screen_name: twitterName })
+      .get("users/show", { user_id: twitterId })
       .then(results => {
         resolve(results.profile_image_url_https.replace("_normal", ""));
       })
@@ -117,16 +123,32 @@ let getPoliticiansProfilePic = twitterName => {
   });
 };
 
+let screenNameToId = screenName => {
+  return new Promise((resolve, reject) => {
+    client
+      .get("users/show", { screen_name: screenName })
+      .then(results => {
+        resolve(results.id_str);
+      })
+      .catch(err => {
+        console.log(err);
+        resolve(null);
+      });
+  });
+};
+
 exports.searchByElectorate = (req, res) => {
-  let twitterNames = [];
-  let electorateToFind = toTitleCase(req.params.party.replace(/(-)/g, " "));
+  let twitterIds = [];
+  let electorateToFind = toTitleCase(
+    req.params.electorate.replace(/(-)/g, " ")
+  );
 
   Politician.find({ electorate: electorateToFind }, (err, politicians) => {
     if (err) res.send(err);
     for (let i = 0; i < politicians.length; i++) {
-      twitterNames.push(politicians[i].twitterName);
+      twitterIds.push(politicians[i].twitterId);
     }
-    getPictures(twitterNames).then(pictures => {
+    getPictures(twitterIds).then(pictures => {
       res.render("search", {
         title: electorateToFind,
         politicians,
@@ -144,11 +166,11 @@ exports.getListOfPoliticians = (req, res, next) => {
           _id: "$_id",
           display: { $first: "$name" }
         }
-      }
+      },
+      { $sort: { display: 1 } }
     ],
     function postResponse(err, names) {
       if (err) res.send(err);
-      console.log(names);
       res.json(names);
     }
   );
@@ -161,7 +183,6 @@ exports.getListOfParties = (req, res, next) => {
     parties
   ) {
     if (err) res.send(err);
-    console.log(parties);
     res.json(parties);
   });
 };
@@ -192,7 +213,7 @@ exports.getPoliticianPage = (req, res) => {
         title: { $first: "$title" },
         electorate: { $first: "$electorate" },
         politicalParty: { $first: "$politicalParty" },
-        twitterName: { $first: "$twitterName" }
+        twitterId: { $first: "$twitterId" }
       }
     }
   ]).exec();
@@ -205,14 +226,14 @@ exports.getPoliticianPage = (req, res) => {
 
   let getPoliticiansProfilePic = getPolitician
     .then(politician => {
-      console.log(politician);
-      return client.get("users/show", { screen_name: politician.twitterName });
+      return client.get("users/show", {
+        user_id: politician[0].twitterId
+      });
     })
     .then(results => {
       return results.profile_image_url_https.replace("_normal", "");
     })
     .catch(err => {
-      console.log(err);
       return null;
     });
 
@@ -321,7 +342,6 @@ exports.getPoliticianPage = (req, res) => {
 
   Promise.all(promises)
     .then(results => {
-      //console.log(results[0]);
       res.render("politician", {
         title: results[0][0].name,
         politician: results[0][0],
