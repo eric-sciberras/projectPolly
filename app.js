@@ -54,7 +54,14 @@ const app = express();
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 mongoose.set("useNewUrlParser", true);
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI, {
+  // Reconncting params set to prevent MongoError
+  // https://stackoverflow.com/a/39831825/10114115
+  // sets how many times to try reconnecting
+  reconnectTries: Number.MAX_VALUE,
+  // sets the delay between every retry (milliseconds)
+  reconnectInterval: 1000
+});
 mongoose.connection.on("error", err => {
   console.error(err);
   console.log(
