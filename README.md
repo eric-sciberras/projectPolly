@@ -32,7 +32,7 @@ Users can add promises a politician has made and vote on whether this promise ha
 
 ### Views
 
-Users can add any political views a politician has been made.
+Users can add any political views a politician has made.
 
 ### User Voting System
 
